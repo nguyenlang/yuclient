@@ -1,12 +1,19 @@
 package com.antz.yuclient;
 
+import android.content.Intent;
+
 /**
  * Created by admin on 16-Oct-17.
  */
 
 public interface YouTubeActivityView {
-    void onSubscribetionSuccess(String title);
+    void onSubscriptionSuccess(String title);
 
-    void onSubscribetionFail();
+    void onCallApiFail();
 
+    void onCommentSuccess(String title);
+
+    void onRateSuccess();
+
+    void onGrantPermisson(Intent i);
 }

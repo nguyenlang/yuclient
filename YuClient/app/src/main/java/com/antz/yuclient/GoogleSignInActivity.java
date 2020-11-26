@@ -2,6 +2,7 @@ package com.antz.yuclient;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import Utils.CommonUtils;
 
@@ -22,7 +29,7 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
 
     private static final int RC_SIGN_IN = 1212;
     protected static final String USER_EMAIL = "userEmailId";
-    //private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -30,18 +37,18 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // Configure Google Sign In option
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                //.requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
-               // .requestScopes(new Scope("https://www.googleapis.com/auth/youtube"))  // you can request scope here OR at the time of subscribe
+                // .requestScopes(new Scope("https://www.googleapis.com/auth/youtube"))  // you can request scope here OR at the time of subscribe
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         findViewById(R.id.btnSignin).setOnClickListener(new View.OnClickListener() {
@@ -50,23 +57,26 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
                 signIn();
             }
         });
+
+        findViewById(R.id.btnInstallApp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goMarket = new Intent(Intent.ACTION_VIEW)
+                        .setData(Uri.parse(
+                                "https://play.google.com/store/apps/details?id=secure.unblock.unlimited.proxy.snap.hotspot.shield"));
+
+                startActivity(goMarket);
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        /* Check if user is signed in (non-null) and send to next activity accordingly.
+        // Check if user is signed in (non-null) and send to next activity accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){
-            startActivity(new Intent(this,YouTubeSubscribeActivity.class));
-            finish();
-        }*/
-
-        //check for existing user
-        String accountName = getPreferences(Context.MODE_PRIVATE).getString(CommonUtils.PREF_ACCOUNT_NAME, null);
-        if(accountName != null)
-        {
-            startActivity(new Intent(this, YouTubeSubscribeActivity.class));
+            startActivity(new Intent(this,YouTubeSubscribeActivity.class).putExtra(USER_EMAIL, currentUser.getEmail()));
             finish();
         }
     }
@@ -88,8 +98,7 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
             {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                updateUINoFB(account.getEmail());
-                //firebaseAuthWithGoogle(account);
+                firebaseAuthWithGoogle(account);
             }
             else
             {
@@ -99,7 +108,6 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
         }
     }
 
-/*
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -123,7 +131,6 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
                 });
 
     }
-*/
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -137,13 +144,4 @@ public class GoogleSignInActivity extends AppCompatActivity implements GoogleApi
             finish();
         }
     }
-
-    private void updateUINoFB(String email) {
-        if(!email.isEmpty())
-        {
-            startActivity(new Intent(this, YouTubeSubscribeActivity.class).putExtra(USER_EMAIL, email));
-            finish();
-        }
-    }
-
 }

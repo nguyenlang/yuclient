@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.antz.yuclient.GoogleSignInActivity">
 
 
@@ -11,5 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:id="@+id/btnSignin"/>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnInstallApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="Install" />
 
 </LinearLayout>

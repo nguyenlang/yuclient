@@ -1,5 +1,6 @@
 package com.antz.yuclient;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,19 +25,25 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
 
 import java.util.Arrays;
 import java.util.List;
 
 import Utils.CommonUtils;
+import Utils.Rate;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.antz.yuclient.R.id.playerView;
 
-public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener,EasyPermissions.PermissionCallbacks,YouTubeActivityView {
+public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener,EasyPermissions.PermissionCallbacks,YouTubeActivityView,View.OnClickListener {
     // if you are using YouTubePlayerView in xml then activity must extend YouTubeBaseActivity
 
     private static final int RECOVERY_DIALOG_REQUEST = 1;
@@ -52,43 +60,49 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
     private YouTubeActivityPresenter presenter;
     private int counter = 0;
 
+    private int btnClickId = 0;
+    private String videoId = "AmuJGO8jAiw";
+    private String chanelId ="UCQpRVrmjEL-ivMNELOPq_Mw";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_you_tube_subscribe);
 
-        // initialize presenter
-        presenter = new YouTubeActivityPresenter(this,this);
+        Intent intent = getIntent();
+        if(intent.hasExtra(GoogleSignInActivity.USER_EMAIL))
+        {
+            String emailId = intent.getStringExtra(GoogleSignInActivity.USER_EMAIL);
+            if(!emailId.isEmpty())
+            {
+                SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(CommonUtils.PREF_ACCOUNT_NAME, emailId);
+                editor.apply();
+            }
+        }
 
-        final String emailId = getIntent().getExtras().getString(GoogleSignInActivity.USER_EMAIL);
         YouTubePlayerSupportFragment supportFragment = (YouTubePlayerSupportFragment) getSupportFragmentManager().findFragmentById(R.id.playerView);
         supportFragment.initialize(youtubeKey,this); // paste your youtube key
 
         mCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(YouTubeScopes.YOUTUBE))
+                getApplicationContext(), Arrays.asList(YouTubeScopes.YOUTUBE, YouTubeScopes.YOUTUBE_FORCE_SSL))
                 .setBackOff(new ExponentialBackOff());
 
+        // initialize presenter
+        HttpTransport transport = AndroidHttp.newCompatibleTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        YouTube service = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName(this.getResources().getString(R.string.app_name))
+                    .build();
 
-        findViewById(R.id.btnSubscribe).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              /*              FIRST GOTO FOLLOWING LINK AND ENABLE THE YOUTUBE API ACCESS
-                https://console.developers.google.com/apis/api/youtube.googleapis.com/overview?project=YOUR_PROJECT_ID**/
-                if(!emailId.isEmpty())
-                {
-                    String st1 = getPreferences(Context.MODE_PRIVATE).getString(CommonUtils.PREF_ACCOUNT_NAME, null);
+        presenter = new YouTubeActivityPresenter(this,this, service);
 
-                    SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putString(CommonUtils.PREF_ACCOUNT_NAME, emailId);
-                    editor.apply();
-
-                    String st2 = getPreferences(Context.MODE_PRIVATE).getString(CommonUtils.PREF_ACCOUNT_NAME, null);
-
-                }
-                getResultsFromApi();
-            }
-        });
+        findViewById(R.id.btnSubscribe).setOnClickListener(this);
+        findViewById(R.id.btnComment).setOnClickListener(this);
+        findViewById(R.id.btnLike).setOnClickListener(this);
+        findViewById(R.id.btnChangeAcount).setOnClickListener(this);
 
     }
 
@@ -96,9 +110,8 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
 
         if (!wasRestored) {
-            // paste youtube video id here
             //youTubePlayer.cueVideo("VWLGzTS2goo"); //Use cueVideo()  method, if you don't want to play it automatically
-            youTubePlayer.loadVideo("VWLGzTS2goo"); //loadVideo() will auto play video
+            youTubePlayer.loadVideo(videoId); //loadVideo() will auto play video
             // Hiding seek player controls
            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
         }
@@ -137,10 +150,43 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
             pDialog = new ProgressDialog(YouTubeSubscribeActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.show();
-            // handing subscribe task by presenter
-            presenter.subscribeToYouTubeChannel(mCredential,"UCyAojDE5b7HoWX6rzYUn5Mg"); // pass youtube channelId as second parameter
+            switch (btnClickId)
+            {
+                case R.id.btnSubscribe:
+                    presenter.subscribeToYouTubeChannel(chanelId);
+                    break;
+                case R.id.btnComment:
+                    presenter.insertCommentToVideo(videoId);
+                    break;
+                case R.id.btnLike:
+                    presenter.rateVideo(videoId, Rate.LIKE);
+                    break;
+                default:
+                    pDialog.dismiss();
+                    Toast.makeText(this,"Nothing to do", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }
+    }
 
+    int selectAccount = 0;
+    private void changeAccount() {
+        AccountManager accountManager = AccountManager.get(this);
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        if(accounts.length < 0)return;
+        String accountName;
+        if(selectAccount < accounts.length)
+        {
+            accountName = accounts[selectAccount].name;
+            selectAccount++;
+        }
+        else
+        {
+            selectAccount = 0;
+            accountName = accounts[0].name;
+        }
+        mCredential.setSelectedAccountName(accountName);
+        Toast.makeText(this,"Account: " + accountName, Toast.LENGTH_SHORT).show();
     }
 
     // checking google play service is available on phone or not
@@ -192,6 +238,7 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
             }
 
     }
+
 
 
 
@@ -278,11 +325,8 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
 
     }
 
-
-
-
     @Override  // responce from presenter on success
-    public void onSubscribetionSuccess(String title) {
+    public void onSubscriptionSuccess(String title) {
         if (pDialog != null && pDialog.isShowing()) {
             pDialog.dismiss();
         }
@@ -290,7 +334,7 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
     }
 
     @Override // responce from presenter on failure
-    public void onSubscribetionFail() {
+    public void onCallApiFail() {
 
         if (pDialog != null && pDialog.isShowing()) {
             pDialog.dismiss();
@@ -302,7 +346,7 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
             counter++; // attempt three times on failure
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
-                    .requestScopes(new Scope("https://www.googleapis.com/auth/youtube")) // require this scope for youtube channel subscribe
+                    .requestScopes(new Scope(YouTubeScopes.YOUTUBE_FORCE_SSL)) // require this scope for youtube channel subscribe, comment, like
                     .build();
 
             GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
@@ -319,5 +363,38 @@ public class YouTubeSubscribeActivity extends AppCompatActivity implements YouTu
         }
       
 
+    }
+
+    @Override  // responce from presenter on success
+    public void onCommentSuccess(String title) {
+        if (pDialog != null && pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
+        Toast.makeText(YouTubeSubscribeActivity.this, "Successfully add comment to "+title, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRateSuccess() {
+        if (pDialog != null && pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
+        Toast.makeText(YouTubeSubscribeActivity.this, "Successfully rate", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGrantPermisson(Intent intent) {
+        startActivityForResult(intent, REQUEST_AUTHORIZATION);
+    }
+
+    @Override
+    public void onClick(View v) {
+        /*              FIRST GOTO FOLLOWING LINK AND ENABLE THE YOUTUBE API ACCESS
+        https://console.developers.google.com/apis/api/youtube.googleapis.com/overview?project=YOUR_PROJECT_ID**/
+        btnClickId = v.getId();
+        if(btnClickId == R.id.btnChangeAcount)
+        {
+            changeAccount();
+        }else
+            getResultsFromApi();
     }
 }
