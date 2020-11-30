@@ -1,0 +1,15 @@
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\bin\Debug\YUWebView.exe.config
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\bin\Debug\YUWebView.exe
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\bin\Debug\YUWebView.pdb
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.csprojAssemblyReference.cache
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\MainWindow.g.cs
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\App.g.cs
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView_MarkupCompile.cache
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView_MarkupCompile.lref
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\MainWindow.baml
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.g.resources
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.Properties.Resources.resources
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.csproj.GenerateResource.cache
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.csproj.CoreCompileInputs.cache
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.exe
+D:\SourceCode\yuclient\RemoteCenter\YUWebView\obj\Debug\YUWebView.pdb

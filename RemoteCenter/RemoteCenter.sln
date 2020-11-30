@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteCenter", "RemoteCente
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YUWebView", "YUWebView\YUWebView.csproj", "{AB808636-510D-4B8B-8767-0296934D3A07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CenterSocketRm", "CenterSocketRm\CenterSocketRm.csproj", "{BB5FEB13-87A8-4DCA-982A-3FAB25AC9845}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YUClientSelenium", "YUClientSelenium\YUClientSelenium.csproj", "{70FE5B1C-A7D7-4627-B1F0-E48FBA035FD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{AB808636-510D-4B8B-8767-0296934D3A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB808636-510D-4B8B-8767-0296934D3A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB808636-510D-4B8B-8767-0296934D3A07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB5FEB13-87A8-4DCA-982A-3FAB25AC9845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB5FEB13-87A8-4DCA-982A-3FAB25AC9845}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB5FEB13-87A8-4DCA-982A-3FAB25AC9845}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB5FEB13-87A8-4DCA-982A-3FAB25AC9845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70FE5B1C-A7D7-4627-B1F0-E48FBA035FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70FE5B1C-A7D7-4627-B1F0-E48FBA035FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70FE5B1C-A7D7-4627-B1F0-E48FBA035FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70FE5B1C-A7D7-4627-B1F0-E48FBA035FD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
