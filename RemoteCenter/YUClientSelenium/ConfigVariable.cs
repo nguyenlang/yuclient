@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace YUClientSelenium
 {
-    class ConfigVariable
+    class Common
     {
+        public const String chromeDir = @"user-data-dir=C:\Users\Admin\AppData\Local\Google\Chrome\User Data\Sel)"; // for save login session
 
     }
 
@@ -29,6 +30,8 @@ namespace YUClientSelenium
 
         //for login
         public const String loginEditBoxId = "identifierId";
-        public const String loginNexId = "identifierNext";
+        public const String loginNextId = "identifierNext";
+        public const String passEditBoxName = "password";
+        public const String passNextId = "passwordNext";
     }
 }
