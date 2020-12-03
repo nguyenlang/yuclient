@@ -34,9 +34,6 @@ namespace RemoteCenter.Socket
         }
 
 
-        public sendCommand()
-
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
