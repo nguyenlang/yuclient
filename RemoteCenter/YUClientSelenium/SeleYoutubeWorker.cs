@@ -17,11 +17,12 @@ namespace YUClientSelenium
         public SeleYoutubeWorker()
         {
             //Save login session:
-            ChromeOptions option = new ChromeOptions();
-            option.AddArguments(Common.chromeDir);
-            webDriver = new ChromeDriver(option);
+            //ChromeOptions option = new ChromeOptions();
+            //option.AddArguments(Common.chromeDir);
+            //webDriver = new ChromeDriver(option);
+            
             //Login each time
-            //webDriver = new ChromeDriver();
+            webDriver = new ChromeDriver();
             webDriverWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(10));
         }
 
@@ -59,7 +60,7 @@ namespace YUClientSelenium
             }
             return true;
         }
-        public async Task<bool> LoginAccountAsync(string username, string pass, string confirmMail)
+        public async Task<bool> LoginNewAccountAsync(string username, string pass, string confirmMail)
         {
             try
             {
@@ -124,7 +125,7 @@ namespace YUClientSelenium
         public void Subcribe()
         {
             //find like button
-            var subcribeBtn = webDriver?.FindElement(By.XPath(ElementIdentify.likeXpath));
+            var subcribeBtn = webDriver?.FindElement(By.XPath(ElementIdentify.subcribeTextXpath));
             //TODO: check isSubcribe
             subcribeBtn?.Click();
         }
@@ -171,6 +172,11 @@ namespace YUClientSelenium
         {
             element.SendKeys(text);
             await Task.Delay(RandTimeWait());
+        }
+
+        public void Close()
+        {
+            webDriver?.Dispose();
         }
     }
 }

@@ -5,8 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YUClientSelenium"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="450">
+        Title="MainWindow" Height="150" Width="280"
+        Loaded="Window_Loaded">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" Background="Gray">
+            
+        </ListView>
+        <StackPanel Grid.Row="1" Height="25" Orientation="Horizontal">
+            <TextBox x:Name="videoUrl" Width="140" Height="22"
+                     HorizontalAlignment="Left" VerticalAlignment="Center"
+                     Margin="5 2"
+                     VerticalContentAlignment="Center"/>
+            <Button x:Name="playVideo" Width="50" Height="20" Content="Play" Click="playVideo_Click"
+                    Margin="2" FontSize="9"></Button>
+            <Button x:Name="changeAccount" Width="65" Height="20" Content="ChangeAcc" Click="changeAccount_Click"
+                    Margin="2" FontSize="9"></Button>
+         </StackPanel>
         
     </Grid>
 </Window>
