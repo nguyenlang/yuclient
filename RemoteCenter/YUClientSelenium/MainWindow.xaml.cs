@@ -69,6 +69,8 @@ namespace YUClientSelenium
             //open video
             youtubeWorker?.OpenYoutubeUrl(playUrl);
             dispatcherTimer.Start();
+            await Task.Delay(10 * 1000);
+            youtubeWorker?.Play();
 
             await Task.Delay(30 * 1000);
             youtubeWorker?.Like();

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq;  
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -110,24 +110,61 @@ namespace YUClientSelenium
         {
             //find like button
             var likeBtn = webDriver?.FindElement(By.XPath(ElementIdentify.likeXpath));
-            //TODO: check isLike
-            likeBtn?.Click();
+            var cssclass = likeBtn.GetAttribute("class");
+            if(cssclass.Contains("style-text"))
+            {
+                likeBtn?.Click();
+            }    
+
+        }
+
+        public void Play()
+        {
+            try
+            {
+                var playBtn = webDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.XPath(ElementIdentify.playBtnXpath)));
+                var label = playBtn.GetAttribute("aria-label");
+                if (label.Contains("Play"))
+                {
+                    playBtn.Click();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+            }
         }
 
         public void DisLike()
         {
             //find like button
             var disLikeBtn = webDriver?.FindElement(By.XPath(ElementIdentify.disLikeXpath));
-            //TODO: check isDislike
-            disLikeBtn?.Click();
+            var cssclass = disLikeBtn.GetAttribute("class");
+            if (cssclass.Contains("style-text"))
+            {
+                disLikeBtn?.Click();
+            }
         }
 
         public void Subcribe()
         {
-            //find like button
-            var subcribeBtn = webDriver?.FindElement(By.XPath(ElementIdentify.subcribeTextXpath));
-            //TODO: check isSubcribe
-            subcribeBtn?.Click();
+            try
+            {
+                //find sub
+                var subcribeBtn = webDriver?.FindElement(By.XPath(ElementIdentify.subcribeTextXpath));
+                var paperCheckSub = webDriver?.FindElement(By.XPath(ElementIdentify.paperButtonCheckSub));
+                var label = paperCheckSub.Text;
+                if(label.Contains("Đăng ký") || label.Contains("SUBSCRIBE"))
+                {
+                    subcribeBtn?.Click();
+                }
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+
         }
 
         public async Task CommentAsync(string comment)
