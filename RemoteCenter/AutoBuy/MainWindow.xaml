@@ -12,83 +12,218 @@
         <local:StatusToText x:Key="StatusToText"/>
     </Window.Resources>
     <Grid Margin="0,0,0,3">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="0,0,0.2,0.4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Margin="0,0,0.2,0.4">
+            <StackPanel Orientation="Horizontal" Height="25" Margin="0 5">
+                <Label Content="Name:"/>
+                <TextBox x:Name="txtName" Width="100" Height="23"
+                     VerticalContentAlignment="Center" Margin="5 0"/>
+                <Label Content="UId:"/>
+                <TextBox x:Name="txtFindAsin" Width="120" Height="23"
+                         VerticalContentAlignment="Center" Margin="15 0"/>
+                <Label Content="LimitPrice:"/>
+                <TextBox x:Name="txtLimitPrice" Width="45" Height="23"
+                     VerticalContentAlignment="Center"/>
+                <Button x:Name="Add" Content="Add" HorizontalAlignment="Right"
+                        Width="60" Height="24" Margin="5 0"
+                        Click="AddAsin"/>
+                <Button x:Name="loadFromFile" Content="LoadFromFile.."
+                        Margin="5 0"
+                        Padding="5"/>
+            </StackPanel>
+            <Grid Grid.Row="2" Margin="5 0" Height="30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                    <CheckBox x:Name="IsAmazon"
+                                 VerticalAlignment="Center"
+                                 Content="AMAZON"
+                                 FontWeight="Bold"
+                                 Grid.Column="0"
+                                 HorizontalAlignment="Center"
+                                 IsChecked="True"
+                              />
+                <CheckBox x:Name="IsNewEgg"
+                                 VerticalAlignment="Center"
+                                 Content="NEWEGG"
+                                 FontWeight="Bold"
+                                 Grid.Column="1"
+                                 HorizontalAlignment="Center"
+                                 IsChecked="False"
+                                 IsEnabled="False"
+                              />
+                <CheckBox x:Name="IsBestBuy"
+                                 VerticalAlignment="Center"
+                                 Content="BestBuy"
+                                 FontWeight="Bold"
+                                 Grid.Column="2"
+                                 HorizontalAlignment="Center"
+                                 IsChecked="False"
+                                 IsEnabled="False"
+                              />
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="Amazon">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Height="25">
-                    <Label Content="Name:"/>
-                    <TextBox x:Name="txtName" Width="100" Height="23"
-                     VerticalContentAlignment="Center" Margin="5 0"/>
-                    <Label Content="MaxPrice:"/>
-                    <TextBox x:Name="txtLimitPrice" Width="45" Height="23"
-                     VerticalContentAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Height="25" Margin="0 5">
-                    <Label Content="Asin:"/>
-                    <TextBox x:Name="txtFindAsin" Width="100" Height="23"
-                         VerticalContentAlignment="Center" Margin="15 0"/>
-                    <Button x:Name="Add" Content="Add" HorizontalAlignment="Right"
-                        Width="60" Height="24"
-                        Click="AddAsin"/>
-                </StackPanel>
-                <Button Grid.Row="2" Content="Load List Item..." Margin="5 0" Height="23"></Button>
-            </Grid>
-            <ListView Grid.Row="1" x:Name="ListAsin"
+                <ListView Grid.Row="1" x:Name="ListAsin"
                       ItemsSource="{Binding AsinList}">
-                <ListView.Resources>
-                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                    </Style>
-                </ListView.Resources>
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name" Width="80" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Status" Width="100">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Status, Converter={StaticResource StatusToText}}"
+                    <ListView.Resources>
+                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="80" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Status" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Status, Converter={StaticResource StatusToText}}"
                                                Background="{Binding Status, Converter={StaticResource StatusToColor}}"
                                                HorizontalAlignment="Left"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Max($)" Width="40" DisplayMemberBinding="{Binding MaxPrice}">
-                        </GridViewColumn>
-                        <GridViewColumn Header="Price" Width="40" DisplayMemberBinding="{Binding Price}">
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-            <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Right">
-                <Button x:Name="Config" Content="ConfigLocation"
-                          VerticalAlignment="Center" Width="85" Height="25"
-                          Margin="5 5 86 0"
-                          Click="Config_Click"/>
-                <Button x:Name="Start" Content="Start"
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Max($)" Width="40" DisplayMemberBinding="{Binding MaxPrice}">
+                            </GridViewColumn>
+                            <GridViewColumn Header="Price" Width="40" DisplayMemberBinding="{Binding Price}">
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove" 
+                                  Click="MenuItem_Remove"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+                <ListView x:Name="LogList" 
+                      Grid.Row="2"
+                      ItemsSource="{Binding Logs}"></ListView>
+            </Grid>
+            <Grid x:Name="NewEggs" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0" x:Name="ListNeId"
+                      ItemsSource="{Binding NeIdList}">
+                    <ListView.Resources>
+                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="80" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Status" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Status, Converter={StaticResource StatusToText}}"
+                                               Background="{Binding Status, Converter={StaticResource StatusToColor}}"
+                                               HorizontalAlignment="Left"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Max($)" Width="40" DisplayMemberBinding="{Binding MaxPrice}">
+                            </GridViewColumn>
+                            <GridViewColumn Header="Price" Width="40" DisplayMemberBinding="{Binding Price}">
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove" 
+                                  Click="MenuItem_Remove"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+                <ListView x:Name="NeLogList" 
+                      Grid.Row="1"
+                      ItemsSource="{Binding NeLogs}"></ListView>
+            </Grid>
+            <Grid x:Name="BestBuy" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0" x:Name="BestbuyId"
+                      ItemsSource="{Binding BestbuyIdList}">
+                    <ListView.Resources>
+                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="80" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Status" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Status, Converter={StaticResource StatusToText}}"
+                                               Background="{Binding Status, Converter={StaticResource StatusToColor}}"
+                                               HorizontalAlignment="Left"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Max($)" Width="40" DisplayMemberBinding="{Binding MaxPrice}">
+                            </GridViewColumn>
+                            <GridViewColumn Header="Price" Width="40" DisplayMemberBinding="{Binding Price}">
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove" 
+                                  Click="MenuItem_Remove"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+                <ListView x:Name="BestbuyLogs" 
+                      Grid.Row="1"
+                      ItemsSource="{Binding BestBuyLogs}"></ListView>
+            </Grid>
+        </Grid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Label Content="TimeStam(ms)" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtTimeStamp" 
+                          VerticalAlignment="Center" Width="60" Height="25"
+                         />
+            <CheckBox x:Name="chkBoxHeadless" IsChecked="False"
+                          VerticalAlignment="Center"
+                      Margin="5"/>
+            <Label Content="Headless" VerticalAlignment="Center"/>
+            <Button x:Name="Start" Content="Start"
                           Width="40" Height="25"
                           HorizontalAlignment="Right"
                           Click="Start_Click"
                           Margin="5"/>
-                <Button x:Name="Stop" Content="Stop"
+            <Button x:Name="Stop" Content="Stop"
                           Width="40" Height="25"
                           HorizontalAlignment="Right"
-                          Click="Stop_Click"/>
-                
-            </StackPanel>
-        </Grid>
+                          Click="Stop_Click"
+                    Margin="5"/>
+        </StackPanel>
     </Grid>
 </Window>
