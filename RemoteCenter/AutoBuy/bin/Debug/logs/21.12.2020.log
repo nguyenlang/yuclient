@@ -1,0 +1,20 @@
+2020-12-21 14:27:31,276 [8] INFO  AutoBuy.MainWindow [(null)] - Mouse B076F5P28T stock 10.99
+2020-12-21 14:32:21,140 [8] INFO  AutoBuy.MainWindow [(null)] - Mouse B076F5P28T stock 10.99
+2020-12-21 14:32:47,470 [8] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 2 seconds
+2020-12-21 14:32:47,601 [8] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__41.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 338
+2020-12-21 14:33:01,061 [8] INFO  AutoBuy.MainWindow [(null)] - Mouse B076F5P28T stock 10.99
+2020-12-21 14:33:26,539 [8] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 2 seconds
+2020-12-21 14:33:26,565 [8] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__41.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 338
+2020-12-21 14:33:39,626 [8] INFO  AutoBuy.MainWindow [(null)] - Mouse B076F5P28T stock 10.99
+2020-12-21 14:33:53,654 [8] DEBUG AutoBuy.MainWindow [(null)] - chrome not reachable
+  (Session info: chrome=87.0.4280.88)
+2020-12-21 14:34:05,757 [12] DEBUG AutoBuy.MainWindow [(null)] - chrome not reachable
+  (Session info: chrome=87.0.4280.88)
+2020-12-21 14:34:05,776 [12] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.GetScreenshot()
+   at AutoBuy.MainWindow.<>c__DisplayClass55_0.<TakeSnapShot>b__0() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 588

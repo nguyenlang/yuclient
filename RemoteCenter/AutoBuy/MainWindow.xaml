@@ -27,31 +27,48 @@
                 <TextBox x:Name="txtName" Width="100" Height="23"
                      VerticalContentAlignment="Center" Margin="5 0"/>
                 <Label Content="UId:"/>
-                <TextBox x:Name="txtFindAsin" Width="120" Height="23"
+                <TextBox x:Name="txtFindAsin" Width="100" Height="23"
                          VerticalContentAlignment="Center" Margin="15 0"/>
-                <Label Content="LimitPrice:"/>
+                <Label Content="MaxPrice:"/>
                 <TextBox x:Name="txtLimitPrice" Width="45" Height="23"
                      VerticalContentAlignment="Center"/>
-                <Button x:Name="Add" Content="Add" HorizontalAlignment="Right"
+                <Label Content="BuyLimit:"/>
+                <TextBox x:Name="txtBuyLimit" Width="30" Height="23" VerticalContentAlignment="Center"
+                           Text="1" HorizontalContentAlignment="Center"/>
+                <Button x:Name="Add" Content="Add"
                         Width="60" Height="24" Margin="5 0"
-                        Click="AddAsin"/>
-                <Button x:Name="loadFromFile" Content="LoadFromFile.."
+                        Click="AddAsin"
+                        VerticalAlignment="Center"/>
+                <Button x:Name="saveList" Content="SaveList"
                         Margin="5 0"
-                        Padding="5"/>
+                        Padding="5"
+                        VerticalAlignment="Center"
+                        Click="saveList_Click"/>
+                <Button x:Name="loadList" Content="LoadList"
+                        Margin="5 0"
+                        Padding="5"
+                        VerticalAlignment="Center"
+                        Click="loadList_Click"/>
+                <Button x:Name="SettingBrowser"
+                        Content="SettingBrowser"
+                        Margin="5 0"
+                        Click="SettingBrowser_Click"
+                        VerticalAlignment="Center"/>
             </StackPanel>
             <Grid Grid.Row="2" Margin="5 0" Height="30">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="261*"/>
+                    <ColumnDefinition Width="262*"/>
+                    <ColumnDefinition Width="69*"/>
+                    <ColumnDefinition Width="192*"/>
                 </Grid.ColumnDefinitions>
-                    <CheckBox x:Name="IsAmazon"
+                <CheckBox x:Name="IsAmazon"
                                  VerticalAlignment="Center"
                                  Content="AMAZON"
                                  FontWeight="Bold"
                                  Grid.Column="0"
                                  HorizontalAlignment="Center"
-                                 IsChecked="True"
+                                 IsChecked="True" Margin="94,8,93.8,7"
                               />
                 <CheckBox x:Name="IsNewEgg"
                                  VerticalAlignment="Center"
@@ -60,16 +77,16 @@
                                  Grid.Column="1"
                                  HorizontalAlignment="Center"
                                  IsChecked="False"
-                                 IsEnabled="False"
+                                 IsEnabled="False" Margin="95.2,8,95.4,7"
                               />
                 <CheckBox x:Name="IsBestBuy"
                                  VerticalAlignment="Center"
                                  Content="BestBuy"
                                  FontWeight="Bold"
-                                 Grid.Column="2"
+                                 Grid.Column="3"
                                  HorizontalAlignment="Center"
                                  IsChecked="False"
-                                 IsEnabled="False"
+                                 IsEnabled="False" Margin="29.413,8,99,7"
                               />
             </Grid>
         </Grid>
@@ -120,7 +137,14 @@
                 </ListView>
                 <ListView x:Name="LogList" 
                       Grid.Row="2"
-                      ItemsSource="{Binding Logs}"></ListView>
+                      ItemsSource="{Binding Logs}">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="ClearAll" 
+                                  Click="ClearAllLogs"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
             </Grid>
             <Grid x:Name="NewEggs" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -212,7 +236,8 @@
                          />
             <CheckBox x:Name="chkBoxHeadless" IsChecked="False"
                           VerticalAlignment="Center"
-                      Margin="5"/>
+                            Margin="5"
+                        IsEnabled="False"/>
             <Label Content="Headless" VerticalAlignment="Center"/>
             <Button x:Name="Start" Content="Start"
                           Width="40" Height="25"

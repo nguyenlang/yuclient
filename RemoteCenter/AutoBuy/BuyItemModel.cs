@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace AutoBuy
             }
         }
 
-        private int _status = 0; //0: out of stock, 1: checking, 2: stock ->buy, 3: Over price
+        private int _status = 0; //0: out of stock, 1: checking, 2: stock ->buy, 3: Over price, 4: Bought
+        [JsonIgnore]
         public int Status
         {
             get { return _status; }
@@ -42,7 +44,7 @@ namespace AutoBuy
         }
 
         private double _price;
-
+        [JsonIgnore]
         public double Price
         {
             get { return _price; }
@@ -54,6 +56,14 @@ namespace AutoBuy
                     OnPropertyChanged("Price");
                 }
             }
+        }
+
+        private int _buyLimit  = 1;
+
+        public int BuyLimit
+        {
+            get { return _buyLimit; }       
+            set { _buyLimit = value; }
         }
 
 

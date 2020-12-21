@@ -20,6 +20,8 @@ namespace AutoBuy
             {
                 switch (number)
                 {
+                    case 4:
+                        return "Bought";
                     case 3:
                         return "Over price";
                     case 2:
@@ -48,6 +50,8 @@ namespace AutoBuy
             {
                 switch (number)
                 {
+                    case 4:
+                        return new SolidColorBrush(Colors.LightBlue);
                     case 3:
                         return new SolidColorBrush(Colors.Brown);
                     case 2:
