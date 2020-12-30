@@ -30,7 +30,7 @@
         public const string UserBuyDir = @"\AppData\Local\Google\Chrome\User Data\Amazon";
 
         public const string AmazonListItemFile = "amazonList.json";
-        public const string ScreenShortDir = "ScreenShortDebug";
+        public const string ScreenShortDir = "AmazonScreenShort";
 
         //Buy confirmation
         public const string BuyConfirmStatusPath = "//*[@id=\"widget-purchaseConfirmationStatus\"]/div/h4";
@@ -43,6 +43,7 @@
         public const string AvaiableSignalPath = "//*[@id=\"ProductBuy\"]/div/div[2]/button";
         public const string PriceSignalCSS = ".product-price .price-current";
         public const string NewEggListItemFile = "newEggList.json";
+        public const string ScreenShortDir = "NeweggScreenShort";
     }
 
     class BestBuy

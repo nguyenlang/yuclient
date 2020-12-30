@@ -198,7 +198,7 @@
                     </ListView.ContextMenu>
                 </ListView>
             </Grid>
-            <Grid x:Name="BestBuy" Grid.Column="2"
+            <Grid x:Name="BestBuys" Grid.Column="2"
                   DataContext="{Binding BestBuyChecking}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -251,13 +251,13 @@
             </Grid>
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Label Content="TimeStam(s)" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="-3.899,0.594"/>
+            <Label Content="TimeInterval(s)" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="-3.899,0.594"/>
             <TextBox x:Name="txtTimeStamp" 
                           VerticalAlignment="Center" Width="60" Height="25"
                          />
             <Button x:Name="SetTimeStamp"
                     Width="90" Height="25"
-                    Content="SetTimeStamp"
+                    Content="Set"
                     Margin="5 5 390 5"
                     Click="SetTimeStamp_Click"/>
             <CheckBox x:Name="chkBoxHeadless" IsChecked="False"

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Threading;
 
 namespace AutoBuy
 {
@@ -134,5 +135,7 @@ namespace AutoBuy
 
         [JsonIgnore]
         public int BuyServiceIndex = 0;
+        [JsonIgnore]
+        public CancellationTokenSource CancelSource = null;
     }
 }

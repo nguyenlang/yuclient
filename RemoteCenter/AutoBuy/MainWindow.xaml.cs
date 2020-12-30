@@ -45,15 +45,15 @@ namespace AutoBuy
         private static readonly log4net.ILog log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public CheckingModel NewEggChecking { set; get; }
-        public CheckingModel BestBuyChecking { set; get; }
+        public NewEggCheckingModel NewEggChecking { set; get; }
+        public NewEggCheckingModel BestBuyChecking { set; get; }
 
         public MainWindow()
         {
-            NewEggChecking = new CheckingModel();
             InitializeComponent();
             this.DataContext = this;
 
+            NewEggChecking = new NewEggCheckingModel();
             string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             localCheckDir = userPath + Amazon.UserCheckDir;
             localBuyDir = userPath + Amazon.UserBuyDir;
@@ -439,44 +439,54 @@ namespace AutoBuy
 
         private async void SettingBrowser_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (RbtnAmazon.IsChecked == true)
             {
+                try
+                {
+                    checkDriver?.Dispose();
+                    buyDriver?.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
+                }
+
+                var driverService = ChromeDriverService.CreateDefaultService();
+                driverService.HideCommandPromptWindow = true;
+
+                //clear old cache file
+                for (int i = 1; i < 30; i++)
+                {
+                    if (Directory.Exists(localBuyDir + i))
+                    {
+                        Directory.Delete(localBuyDir + i, true);
+                    }
+                    if (Directory.Exists(localCheckDir + i))
+                    {
+                        Directory.Delete(localCheckDir + i, true);
+                    }
+                }
+
+                ChromeOptions buyOptions = new ChromeOptions();
+                buyOptions.AddArgument(CommonUtil.UserData + localBuyDir);
+                buyDriver = new ChromeDriver(driverService, buyOptions);
+
+                ChromeOptions checkOptions = new ChromeOptions();
+                checkOptions.AddArgument(CommonUtil.UserData + localCheckDir);
+                checkDriver = new ChromeDriver(driverService, checkOptions);
+
+                await Task.Delay(TimeSpan.FromMinutes(5));
                 checkDriver?.Dispose();
                 buyDriver?.Dispose();
             }
-            catch (Exception ex)
+            else if (RbtnNewEgg.IsChecked == true)
             {
-                log.Error(ex.Message);
+                NewEggChecking?.SettingBrowser_Click();
             }
-
-            var driverService = ChromeDriverService.CreateDefaultService();
-            driverService.HideCommandPromptWindow = true;
-
-
-            //clear old cache file
-            for (int i = 1; i < 30; i++)
+            else if (RbtnBestBuy.IsChecked == true)
             {
-                if (Directory.Exists(localBuyDir + i))
-                {
-                    Directory.Delete(localBuyDir + i, true);
-                }
-                if (Directory.Exists(localCheckDir + i))
-                {
-                    Directory.Delete(localCheckDir + i, true);
-                }
+                BestBuyChecking?.SettingBrowser_Click();
             }
-
-            ChromeOptions buyOptions = new ChromeOptions();
-            buyOptions.AddArgument(CommonUtil.UserData + localBuyDir);
-            buyDriver = new ChromeDriver(driverService, buyOptions);
-
-            ChromeOptions checkOptions = new ChromeOptions();
-            checkOptions.AddArgument(CommonUtil.UserData + localCheckDir);
-            checkDriver = new ChromeDriver(driverService, checkOptions);
-
-            await Task.Delay(TimeSpan.FromMinutes(5));
-            checkDriver?.Dispose();
-            buyDriver?.Dispose();
         }
 
         private async void TakeSnapShot(IWebDriver driver)
@@ -576,6 +586,10 @@ namespace AutoBuy
         {
             string limitPrice = txtLimitPrice.Text;
             string limitBuy = txtBuyLimit.Text;
+            if(!IsSettingBrowse())
+            {
+                return;
+            }
 
             try
             {
@@ -705,6 +719,9 @@ namespace AutoBuy
 
         private async void loadList_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsSettingBrowse())
+                return;
+
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Filter = "Json list|*.json"; ;
             openDialog.InitialDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
@@ -826,6 +843,49 @@ namespace AutoBuy
         private void BestBuyClearLog(object sender, RoutedEventArgs e)
         {
             BestBuyChecking.ClearLog();
+        }
+
+        private bool IsSettingBrowse()
+        {
+            if (RbtnAmazon.IsChecked == true)
+            {
+                if (!Directory.Exists(localBuyDir))
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show("Setting browser for amazon checking first");
+                    }));
+                    return false;
+                }
+
+            }
+            else if (RbtnNewEgg.IsChecked == true)
+            {
+                var user = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                var NewEggDir = user + NewEgg.UserDir;
+                if (!Directory.Exists(NewEggDir))
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show("Setting browser for newegg first");
+                    }));
+                    return false;
+                }
+            }
+            else if (RbtnBestBuy.IsChecked == true)
+            {
+                var user = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                var bestbuyDir = user + BestBuy.UserDir;
+                if (!Directory.Exists(bestbuyDir))
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show("Setting browser for bestbuy first");
+                    }));
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

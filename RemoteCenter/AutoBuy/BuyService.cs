@@ -14,7 +14,7 @@ namespace AutoBuy
         public WebDriverWait WebDriverWait { get; set; }
 
         public Boolean IsRunning = false;
-        public BuyService(string localBuyDir, int order)
+        public BuyService(string localBuyDir, int order, PageLoadStrategy pageLoad = PageLoadStrategy.Eager)
         {
             var buyDir = localBuyDir + order;
             if (!Directory.Exists(buyDir))
@@ -31,12 +31,12 @@ namespace AutoBuy
                 foreach (string newPath in Directory.GetFiles(localBuyDir, "*.*",
                     SearchOption.AllDirectories))
                     File.Copy(newPath, newPath.Replace(localBuyDir, buyDir), true);
-            }
+            } 
 
             ChromeOptions option = new ChromeOptions();
             option.AddArgument(CommonUtil.UserData + buyDir);
             //None: wait specific time, Eager: wait until - need loaded page
-            option.PageLoadStrategy = PageLoadStrategy.Eager;
+            option.PageLoadStrategy = pageLoad;
             var driverService = ChromeDriverService.CreateDefaultService();
             driverService.HideCommandPromptWindow = true;
             try
@@ -53,6 +53,13 @@ namespace AutoBuy
                 log.Error(ex.Message);
                 log.Error(ex.StackTrace);
             }
+        }
+
+        public void Close()
+        {
+            WebDriver?.Dispose();
+            WebDriver = null;
+            WebDriverWait = null;
         }
     }
 }

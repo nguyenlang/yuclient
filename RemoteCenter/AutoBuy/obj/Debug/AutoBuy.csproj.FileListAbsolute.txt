@@ -27,3 +27,4 @@ D:\SourceCode\yuclient\RemoteCenter\AutoBuy\obj\Debug\AutoBuy.csproj.CoreCompile
 D:\SourceCode\yuclient\RemoteCenter\AutoBuy\obj\Debug\AutoBuy.csproj.CopyComplete
 D:\SourceCode\yuclient\RemoteCenter\AutoBuy\obj\Debug\AutoBuy.exe
 D:\SourceCode\yuclient\RemoteCenter\AutoBuy\obj\Debug\AutoBuy.pdb
+D:\SourceCode\yuclient\RemoteCenter\AutoBuy\obj\Debug\AutoBuy.csprojAssemblyReference.cache
