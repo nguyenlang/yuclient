@@ -15,22 +15,20 @@ namespace AutoBuy
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int number;
-            if (int.TryParse(value.ToString(), out number))
+            BuyStatus status = (BuyStatus) value;
+
+            switch (status)
             {
-                switch (number)
-                {
-                    case 4:
-                        return "Bought";
-                    case 3:
-                        return "Over price";
-                    case 2:
-                        return "Stock: Buy it";
-                    case 1:
-                        return "Checking ....";
-                    default:
-                        return "Out of stock";
-                }
+                case BuyStatus.BOUGHT:
+                    return "Bought";
+                case BuyStatus.OVER_PRICE:
+                    return "Over price";
+                case BuyStatus.BUYING:
+                    return "Buying...";
+                case BuyStatus.CHECKING:
+                    return "Checking...";
+                case BuyStatus.OUT_OF_STOCK:
+                    return "Out of stock";
             }
             return DependencyProperty.UnsetValue;
         }
@@ -45,22 +43,20 @@ namespace AutoBuy
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int number;
-            if (int.TryParse(value.ToString(), out number))
+            BuyStatus status = (BuyStatus)value;
+
+            switch (status)
             {
-                switch (number)
-                {
-                    case 4:
-                        return new SolidColorBrush(Colors.LightBlue);
-                    case 3:
-                        return new SolidColorBrush(Colors.Brown);
-                    case 2:
-                        return new SolidColorBrush(Colors.LightGreen);
-                    case 1:
-                        return new SolidColorBrush(Colors.White);
-                    default:
-                        return new SolidColorBrush(Colors.Red);
-                }
+                case BuyStatus.BOUGHT:
+                    return new SolidColorBrush(Colors.LightBlue);
+                case BuyStatus.OVER_PRICE:
+                    return new SolidColorBrush(Colors.Brown);
+                case BuyStatus.BUYING:
+                    return new SolidColorBrush(Colors.LightGreen);
+                case BuyStatus.CHECKING:
+                    return new SolidColorBrush(Colors.White);
+                case BuyStatus.OUT_OF_STOCK:
+                    return new SolidColorBrush(Colors.Red);
             }
             return DependencyProperty.UnsetValue;
         }

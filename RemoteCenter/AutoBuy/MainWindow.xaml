@@ -5,12 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoBuy"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800"
+        Title="MainWindow" Height="600" Width="820"
         Closed="Window_Closed">
-    <Window.Resources>
-        <local:StatusToColor x:Key="StatusToColor"/>
-        <local:StatusToText x:Key="StatusToText"/>
-    </Window.Resources>
     <Grid Margin="0,0,0,3">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -52,6 +48,7 @@
                 <Button x:Name="SettingBrowser"
                         Content="SettingBrowser"
                         Margin="5 0"
+                        Padding="5"
                         Click="SettingBrowser_Click"
                         VerticalAlignment="Center"/>
             </StackPanel>
@@ -62,7 +59,8 @@
                     <ColumnDefinition Width="69*"/>
                     <ColumnDefinition Width="192*"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox x:Name="IsAmazon"
+                <RadioButton x:Name="RbtnAmazon"
+                             GroupName="GBuyPlatform"
                                  VerticalAlignment="Center"
                                  Content="AMAZON"
                                  FontWeight="Bold"
@@ -70,16 +68,17 @@
                                  HorizontalAlignment="Center"
                                  IsChecked="True" Margin="94,8,93.8,7"
                               />
-                <CheckBox x:Name="IsNewEgg"
+                <RadioButton x:Name="RbtnNewEgg"
+                             GroupName="GBuyPlatform"
                                  VerticalAlignment="Center"
                                  Content="NEWEGG"
                                  FontWeight="Bold"
                                  Grid.Column="1"
                                  HorizontalAlignment="Center"
-                                 IsChecked="False"
-                                 IsEnabled="False" Margin="95.2,8,95.4,7"
+                                 IsChecked="False" Margin="95.2,8,95.4,7"
                               />
-                <CheckBox x:Name="IsBestBuy"
+                <RadioButton x:Name="RbtnBestBuy"
+                             GroupName="GBuyPlatform"
                                  VerticalAlignment="Center"
                                  Content="BestBuy"
                                  FontWeight="Bold"
@@ -96,7 +95,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="Amazon">
+            <Grid x:Name="AmazonTab">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="2*"/>
@@ -113,7 +112,7 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Name" Width="80" DisplayMemberBinding="{Binding Name}"/>
-                            <GridViewColumn Header="Status" Width="100">
+                            <GridViewColumn Header="Status" Width="90">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Status, Converter={StaticResource StatusToText}}"
@@ -124,7 +123,7 @@
                             </GridViewColumn>
                             <GridViewColumn Header="Max($)" Width="40" DisplayMemberBinding="{Binding MaxPrice}">
                             </GridViewColumn>
-                            <GridViewColumn Header="Price" Width="40" DisplayMemberBinding="{Binding Price}">
+                            <GridViewColumn Header="BuyLimit" Width="50" DisplayMemberBinding="{Binding BuyLimit}">
                             </GridViewColumn>
                         </GridView>
                     </ListView.View>
@@ -132,6 +131,8 @@
                         <ContextMenu>
                             <MenuItem Header="Remove" 
                                   Click="MenuItem_Remove"/>
+                            <MenuItem Header="Detail"
+                                  Click="MenuItem_Detail"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
                 </ListView>
@@ -146,13 +147,14 @@
                     </ListView.ContextMenu>
                 </ListView>
             </Grid>
-            <Grid x:Name="NewEggs" Grid.Column="1">
+            <Grid x:Name="NewEggs" Grid.Column="1"
+                  DataContext="{Binding NewEggChecking}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ListView Grid.Row="0" x:Name="ListNeId"
-                      ItemsSource="{Binding NeIdList}">
+                <ListView Grid.Row="0" x:Name="NewEggList"
+                      ItemsSource="{Binding CheckList}">
                     <ListView.Resources>
                         <Style TargetType="{x:Type GridViewColumnHeader}">
                             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -179,21 +181,31 @@
                     <ListView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Remove" 
-                                  Click="MenuItem_Remove"/>
+                                  Click="NewEggRemove"/>
+                            <MenuItem Header="Detail"
+                                  Click="NewEggDetail"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
                 </ListView>
                 <ListView x:Name="NeLogList" 
                       Grid.Row="1"
-                      ItemsSource="{Binding NeLogs}"></ListView>
+                      ItemsSource="{Binding LogList}">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear"
+                                      Click="NewEggClearLog"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
             </Grid>
-            <Grid x:Name="BestBuy" Grid.Column="2">
+            <Grid x:Name="BestBuy" Grid.Column="2"
+                  DataContext="{Binding BestBuyChecking}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ListView Grid.Row="0" x:Name="BestbuyId"
-                      ItemsSource="{Binding BestbuyIdList}">
+                <ListView Grid.Row="0" x:Name="BestBuyList"
+                      ItemsSource="{Binding CheckList}">
                     <ListView.Resources>
                         <Style TargetType="{x:Type GridViewColumnHeader}">
                             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -220,20 +232,34 @@
                     <ListView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Remove" 
-                                  Click="MenuItem_Remove"/>
+                                  Click="BestBuyRemove"/>
+                            <MenuItem Header="Detail" 
+                                  Click="BestBuyDetail"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
                 </ListView>
                 <ListView x:Name="BestbuyLogs" 
                       Grid.Row="1"
-                      ItemsSource="{Binding BestBuyLogs}"></ListView>
+                      ItemsSource="{Binding LogList}">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear" 
+                                  Click="BestBuyClearLog"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
             </Grid>
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Label Content="TimeStam(ms)" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Content="TimeStam(s)" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="-3.899,0.594"/>
             <TextBox x:Name="txtTimeStamp" 
                           VerticalAlignment="Center" Width="60" Height="25"
                          />
+            <Button x:Name="SetTimeStamp"
+                    Width="90" Height="25"
+                    Content="SetTimeStamp"
+                    Margin="5 5 390 5"
+                    Click="SetTimeStamp_Click"/>
             <CheckBox x:Name="chkBoxHeadless" IsChecked="False"
                           VerticalAlignment="Center"
                             Margin="5"

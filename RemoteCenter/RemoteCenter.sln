@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YUClientSelenium", "YUClien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoBuy", "AutoBuy\AutoBuy.csproj", "{F8F18B59-FDBE-4021-ACBF-23826B37EF73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{AB27EAD5-D32E-4B75-9913-8D9C1DC6180A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F8F18B59-FDBE-4021-ACBF-23826B37EF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8F18B59-FDBE-4021-ACBF-23826B37EF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8F18B59-FDBE-4021-ACBF-23826B37EF73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB27EAD5-D32E-4B75-9913-8D9C1DC6180A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB27EAD5-D32E-4B75-9913-8D9C1DC6180A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB27EAD5-D32E-4B75-9913-8D9C1DC6180A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB27EAD5-D32E-4B75-9913-8D9C1DC6180A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

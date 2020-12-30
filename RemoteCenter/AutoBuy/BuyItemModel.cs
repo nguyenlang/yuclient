@@ -1,17 +1,48 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoBuy
 {
+    public enum BuyStatus{
+        OUT_OF_STOCK,
+        CHECKING,
+        BUYING,
+        BOUGHT,
+        OVER_PRICE
+    }
+
     public class BuyItemModel : INotifyPropertyChanged
     {
-        public string Name { get; set; }
-        public string Asin { get; set; }
+
+        private string _name = string.Empty;
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (!_name.Equals(value))
+                {
+                    _name = value;
+                    OnPropertyChanged("Name");
+                }
+            }
+        }
+
+        private string _asin = string.Empty;
+
+        public string Asin
+         {
+            get { return _asin; }
+            set
+            {
+                if (!_asin.Equals(value))
+                {
+                    _asin = value;
+                    OnPropertyChanged("Asin");
+                }
+            }
+        }
 
         private double _maxPrice = 0;
 
@@ -28,9 +59,9 @@ namespace AutoBuy
             }
         }
 
-        private int _status = 0; //0: out of stock, 1: checking, 2: stock ->buy, 3: Over price, 4: Bought
+        private BuyStatus _status = BuyStatus.OUT_OF_STOCK; //0: out of stock, 1: checking, 2: stock ->buy, 3: Over price, 4: Bought
         [JsonIgnore]
-        public int Status
+        public BuyStatus Status
         {
             get { return _status; }
             set
@@ -62,8 +93,29 @@ namespace AutoBuy
 
         public int BuyLimit
         {
-            get { return _buyLimit; }       
-            set { _buyLimit = value; }
+            get { return _buyLimit; }
+            set {
+                if (_buyLimit != value)
+                {
+                    _buyLimit = value;
+                    OnPropertyChanged("BuyLimit");
+                }
+            }
+        }
+
+        private int _numberBought = 0;
+        [JsonIgnore]
+        public int NumberBought
+        {
+            get { return _numberBought; }
+            set
+            {
+                if (_numberBought != value)
+                {
+                    _numberBought = value;
+                    OnPropertyChanged("NumberBought");
+                }
+            }
         }
 
 
@@ -76,5 +128,11 @@ namespace AutoBuy
         {
             return Name + " - " + Asin + " : " + MaxPrice;
         }
+
+        [JsonIgnore]
+        public BuyService BuyService = null;
+
+        [JsonIgnore]
+        public int BuyServiceIndex = 0;
     }
 }

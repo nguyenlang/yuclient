@@ -1,0 +1,13 @@
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\Test.exe.config
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\Test.exe
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\Test.pdb
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\Newtonsoft.Json.dll
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\System.Net.Http.Formatting.dll
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\ZaloDotNetSDK.dll
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\Newtonsoft.Json.xml
+D:\SourceCode\yuclient\RemoteCenter\Test\bin\Debug\System.Net.Http.Formatting.xml
+D:\SourceCode\yuclient\RemoteCenter\Test\obj\Debug\Test.csprojAssemblyReference.cache
+D:\SourceCode\yuclient\RemoteCenter\Test\obj\Debug\Test.csproj.CoreCompileInputs.cache
+D:\SourceCode\yuclient\RemoteCenter\Test\obj\Debug\Test.csproj.CopyComplete
+D:\SourceCode\yuclient\RemoteCenter\Test\obj\Debug\Test.exe
+D:\SourceCode\yuclient\RemoteCenter\Test\obj\Debug\Test.pdb

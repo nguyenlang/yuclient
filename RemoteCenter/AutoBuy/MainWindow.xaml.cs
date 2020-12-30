@@ -22,30 +22,8 @@ namespace AutoBuy
     public partial class MainWindow : Window
     {
         #region Amazon field
-        //key and xpath
-        private string amazon = "https://www.amazon.com/";
 
-        private string priceBuyBoxId = "price_inside_buybox"; //only for buybox
-        private string priceNewBuyBoxId = "newBuyBoxPrice";
-        private string buyNowBtnId = "buy-now-button";
-
-        //Buy frame
-        private string buyIframeID = "turbo-checkout-iframe";
-        private string oneClickPaidId = "turbo-checkout-place-order-button";
-
-        //Buy page
-        private string buyBtnInPageId = "submitOrderButtonId";
-        private string buyConfirmPageId = "a-page";
-
-        //use for checking:
-        private const string userData = @"user-data-dir=";
-        private string userCheckDir = @"\AppData\Local\Google\Chrome\User Data\amazonCheck";
-        private string userBuyDir = @"\AppData\Local\Google\Chrome\User Data\Amazon";
-        private string localCheckDir;
-        private string localBuyDir;
-
-        private string amazonListItemFile = "amazonList.json";
-        private string ScreenShortDir = "ScreenShortDebug";
+        private string localCheckDir, localBuyDir;
 
         public ObservableCollection<BuyItemModel> AsinList { get; set; } = new ObservableCollection<BuyItemModel>();
         public ObservableCollection<string> Logs { get; set; } = new ObservableCollection<string>();
@@ -53,93 +31,38 @@ namespace AutoBuy
         object lockObject = new object();
         private bool isAmazonRunning = false;
         CancellationTokenSource cancellSource;
-        CancellationToken cancelToken;
+        CancellationToken cancellToken;
 
         IWebDriver checkDriver, buyDriver;
         #endregion
 
-        #region NewEgg
-        //public string NewEgg = "https://www.newegg.com/"; //https://www.newegg.com/d/N82E16819113497 - id
-        //public string NEAddToCartPath = "//*[@id=\"ProductBuy\"]/div[1]/div[2]/button";
-
-        //public ObservableCollection<BuyItemModel> NEUIdList { get; set; } = new ObservableCollection<BuyItemModel>();
-        //public ObservableCollection<string> NEULogs { get; set; } = new ObservableCollection<string>();
-
-        //IWebDriver NEEggDriver;
-        //WebDriverWait NEDriveWait;
-        //DispatcherTimer NEReapeatTimer = new DispatcherTimer();
-        //object NELockObj = new object();
-        //private bool isNERunning = false;
-        //CancellationToken NECancellSource;
-        //CancellationToken NECancelToken;
-
-        #endregion
-
-        #region BestBuy
-
-        #endregion
-
         //Config time
-        private TimeSpan repeatTime = TimeSpan.FromSeconds(2);
+        private TimeSpan repeatTime = TimeSpan.FromSeconds(4);
+        private TimeSpan delayToLoadElement = TimeSpan.FromSeconds(3);
         private const int noPerBrowser = 5;
         public Boolean IsHeadless { get; set; }
 
         private static readonly log4net.ILog log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public CheckingModel NewEggChecking { set; get; }
+        public CheckingModel BestBuyChecking { set; get; }
+
         public MainWindow()
         {
+            NewEggChecking = new CheckingModel();
             InitializeComponent();
             this.DataContext = this;
 
             string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            localCheckDir = userPath + userCheckDir;
-            localBuyDir = userPath + userBuyDir;
-            userCheckDir = userData + localCheckDir;
-            userBuyDir = userData + localBuyDir;
-
-            cancellSource = new CancellationTokenSource();
-            cancelToken = cancellSource.Token;
+            localCheckDir = userPath + Amazon.UserCheckDir;
+            localBuyDir = userPath + Amazon.UserBuyDir;
         }
 
-        private async void Start_Click(object sender, RoutedEventArgs e)
-        {
-            if (!isAmazonRunning && AsinList.Count > 0)
-            {
-                try
-                {
-                    int timeStam = int.Parse(txtTimeStamp.Text);
-                    repeatTime = TimeSpan.FromMilliseconds(timeStam);
-                }
-                catch (Exception)
-                {
-                    //Ignore user timestam
-                }
-
-                isAmazonRunning = true;
-                cancellSource = new CancellationTokenSource();
-                cancelToken = cancellSource.Token;
-                int no = (AsinList.Count - 1) / noPerBrowser;
-                for (int i = 0; i <= no; i++)
-                {
-                    await Task.Run(() => checkAvailable(i), cancelToken);
-                }
-            }
-        }
-
+        #region Amazon
         private IWebDriver CreateWebDriver(int index)
         {
             ChromeOptions options = new ChromeOptions();
-            //Check product availabel
-            //if (chkBoxHeadless.IsChecked == true)
-            //{
-            //    option.AddArguments("headless");
-            //}
-            //else
-            //{
-            //copy cache
-            //Now Create all of the directories
-
             var checkDir = localCheckDir + index;
             if (!Directory.Exists(checkDir))
             {
@@ -158,8 +81,8 @@ namespace AutoBuy
                     File.Copy(newPath, newPath.Replace(localCheckDir, checkDir), true);
             }
 
-            options.AddArgument(userCheckDir + index);
-            options.PageLoadStrategy = PageLoadStrategy.Eager;
+            options.AddArgument(CommonUtil.UserData + checkDir);
+            options.PageLoadStrategy = PageLoadStrategy.None;
 
             var driverService = ChromeDriverService.CreateDefaultService();
             driverService.HideCommandPromptWindow = true;
@@ -168,36 +91,6 @@ namespace AutoBuy
             var webdriver = new ChromeDriver(driverService, options);
             webdriver.Manage().Window.Position = new System.Drawing.Point(0, 0);
             webdriver.Manage().Window.Size = new System.Drawing.Size(800, 600);
-            return webdriver;
-        }
-
-        private IWebDriver CreateBuyWebDriver(int index)
-        {
-
-            var buyDir = localBuyDir + index;
-            if (!Directory.Exists(buyDir))
-            {
-                foreach (string dirPath in Directory.GetDirectories(localBuyDir, "*",
-                SearchOption.AllDirectories))
-                {
-                    string subPath = dirPath.Replace(localBuyDir, buyDir);
-                    if (!Directory.Exists(subPath))
-                    {
-                        Directory.CreateDirectory(subPath);
-                    }
-                }
-                foreach (string newPath in Directory.GetFiles(localBuyDir, "*.*",
-                    SearchOption.AllDirectories))
-                    File.Copy(newPath, newPath.Replace(localBuyDir, buyDir), true);
-            }
-
-            ChromeOptions option = new ChromeOptions();
-            option.AddArgument(userBuyDir + index);
-
-            var driverService = ChromeDriverService.CreateDefaultService();
-            driverService.HideCommandPromptWindow = true;
-
-            var webdriver = new ChromeDriver(driverService, option);
             return webdriver;
         }
 
@@ -210,17 +103,13 @@ namespace AutoBuy
             int index = startIndex;
 
             var checkDriver = CreateWebDriver(Number);
-            var checkDriverWait = new WebDriverWait(checkDriver, TimeSpan.FromMilliseconds(200));
-
-            var buyDriver = CreateBuyWebDriver(Number);
-            var buyDriverWait = new WebDriverWait(buyDriver, TimeSpan.FromSeconds(3));
+            //var checkDriverWait = new WebDriverWait(checkDriver, TimeSpan.FromMilliseconds(2));
 
             while (true)
             {
-                if (cancelToken.IsCancellationRequested || startIndex >= AsinList.Count) //stop thread
+                if (cancellToken.IsCancellationRequested || startIndex >= AsinList.Count) //stop thread
                 {
                     checkDriver?.Dispose();
-                    buyDriver?.Dispose();
                     return;
                 }
                 maxIndex = (startIndex + noPerBrowser - 1);
@@ -234,185 +123,306 @@ namespace AutoBuy
                 asin = AsinList[index];
                 index++;
 
-                if (asin.Status == 4) continue;
-                UpdateAsinStatus(asin, 1);
+                if (asin.Status == BuyStatus.BUYING | asin.Status == BuyStatus.BOUGHT) continue;
+                UpdateAsinStatus(asin, BuyStatus.CHECKING);
 
                 try
                 {
-                    string url = $@"{amazon}dp/{asin.Asin}";
+                    string url = $@"{Amazon.HomeUrl}dp/{asin.Asin}";
                     checkDriver.Navigate().GoToUrl(url);
 
-                    var buyBtn = checkDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(buyNowBtnId)));
-                    IWebElement priceBox = null;
-                    var listPriceItem = checkDriver.FindElements(By.Id(priceBuyBoxId));
-                    if (listPriceItem.Count <= 0)
-                        listPriceItem = checkDriver.FindElements(By.Id(priceNewBuyBoxId));
-
-                    if (listPriceItem.Count > 0)
-                        priceBox = listPriceItem[0];
-                    else
-                    {
-                        UpdateAsinStatus(asin, 3);
-                        log.Info($"{asin.Name} {asin.Asin} stock unknow price");
-
-                        await Task.Delay(repeatTime);
-                        continue;
-                    }
-
-                    //remove $ 
-                    string priceValue = priceBox.Text;
-                    priceValue = priceValue.Substring(1);
-                    double price = Double.Parse(priceValue);
-                    UpdateAsinStatus(asin, 2);
-                    UpdateAsinPrice(asin, price);
-
-                    if (asin.MaxPrice == 0 || price <= asin.MaxPrice)
-                    {
-                        var logTime = String.Format("{0:d/M/yyyy HH:mm}", DateTime.Now);
-                        AddLog(logTime + " " + asin.Name + " stock " + asin.Price);
-                        log.Info($"{asin.Name} {asin.Asin} stock {asin.Price}");
-
-                        for (int i = 0; i < asin.BuyLimit; i++)
-                        {
-                            if (true == await BuyItem(buyDriver, buyDriverWait, url))
-                            {
-                                asin.BuyLimit--;
-                            }
-                        }
-
-                        if (asin.BuyLimit <= 0)
-                        {
-                            UpdateAsinStatus(asin, 4);
-                        }
-                        else
-                        {
-                            UpdateAsinStatus(asin, 0);
-                        }
-                    }
-                    else
-                    {
-                        //over price
-                        UpdateAsinStatus(asin, 3);
-                        var logTime = String.Format("{0:d/M/yyyy HH:mm}", DateTime.Now);
-                        AddLog(logTime + " " + asin.Name + " stock " + asin.Price);
-                        log.Info($"{asin.Name} {asin.Asin} stock {asin.Price}");
-                    }
+                    await Task.Delay(delayToLoadElement);
+                    var buyBtn = checkDriver.FindElement(By.Id(Amazon.BuyNowBtnId));
+                    UpdateAsinStatus(asin, BuyStatus.BUYING);
+                    Task.Run(() => BuyItem(asin));
                     await Task.Delay(repeatTime);
                 }
                 catch (Exception)
                 {
-                    UpdateAsinStatus(asin, 0);
+                    UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
                     log.Info($"{asin.Name} {asin.Asin} out of stock");
                     await Task.Delay(repeatTime);
                 }
             }
         }
 
-        private async Task<Boolean> BuyItem(IWebDriver driver, WebDriverWait driverWait, string url)
+        private async void BuyItemNoElementWait(BuyItemModel asin)
         {
-            //reopen browser if user close it
-            driver.Navigate().GoToUrl(url);
-
-            try
+            BuyService buyService = asin.BuyService;
+            if (buyService?.WebDriver == null)
             {
-                var buyBtn = driverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(buyNowBtnId)));
-                buyBtn.Click();
+                var index = GetSmallestFreeIndex();
+                asin.BuyServiceIndex = index;
+                buyService = asin.BuyService = new BuyService(localBuyDir, index);
+            }
 
-                //Place order show in page
+            string url = $@"{Amazon.HomeUrl}dp/{asin.Asin}";
+            while (true)
+            {
+                //reopen browser if user close it
+                buyService.WebDriver.Navigate().GoToUrl(url);
                 try
                 {
-                    var element = driverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath($"id('{buyBtnInPageId}') | id('{buyIframeID}')")));
-                    if(element.GetAttribute("id").Equals(buyBtnInPageId))
+                    await Task.Delay(delayToLoadElement);
+                    var buyBtn = buyService.WebDriver.FindElement(By.Id(Amazon.BuyNowBtnId));
+
+                    //Check price
+                    IWebElement priceBox = null;
+                    var listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceBuyBoxId));
+                    if (listPriceItem.Count <= 0)
+                        listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceNewBuyBoxId));
+
+                    double price = double.MaxValue;
+                    var logTime = String.Format("{0:d/M/yyyy HH:mm}", DateTime.Now);
+                    if (listPriceItem.Count > 0)
                     {
-                        element.Click();
-                    }
-                    else
-                    {
-                        var buyFrame = driverWait.Until((SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(buyIframeID))));
-                        driver.SwitchTo().Frame(buyFrame);
-                        var placeOrder = driverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(oneClickPaidId)));
-                        placeOrder.Click();
-                        driver.SwitchTo().DefaultContent();
+                        priceBox = listPriceItem[0];
+                        //remove $ 
+                        string priceValue = priceBox.Text;
+                        priceValue = priceValue.Substring(1);
+                        Double.TryParse(priceValue, out price);
+                        UpdateAsinPrice(asin, price);
                     }
 
-                    var thankPage = driverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(buyConfirmPageId)));
-                    await Task.Delay(200);
-                    TakeSnapShot(driver);
-                    return true;
+                    if (asin.MaxPrice != 0 && price >= asin.MaxPrice)
+                    {
+                        AddLog(logTime + " " + asin.Name + " over price " + asin.Price);
+                        log.Info($"{asin.Name} {asin.Asin} stock {asin.Price}");
+                        UpdateAsinStatus(asin, BuyStatus.OVER_PRICE);
+                        return;
+                    }
+
+                    AddLog(logTime + " " + asin.Name + " stock " + asin.Price);
+                    log.Info($"{asin.Name} {asin.Asin} stock {asin.Price}");
+                    buyBtn.Click();
+                    ////
+                    try
+                    {
+                        await Task.Delay(6000);
+                        var element = buyService.WebDriver.FindElement(By.XPath($"id('{Amazon.BuyBtnInPageId}') | id('{Amazon.BuyIframeID}')"));
+                        if (element.GetAttribute("id").Equals(Amazon.BuyBtnInPageId))
+                        {
+                            element.Click();
+                        }
+                        else
+                        {
+                            buyService.WebDriver.SwitchTo().Frame(element);
+                            await Task.Delay(3000);
+                            var placeOrder = buyService.WebDriver.FindElement(By.Id(Amazon.OneClickPaidId));
+                            placeOrder.Click();
+                            buyService.WebDriver.SwitchTo().DefaultContent();
+                        }
+                        await Task.Delay(3000);
+                        var thankLabel = buyService.WebDriver.FindElement(By.XPath(Amazon.BuyConfirmStatusPath));
+                        TakeSnapShot(buyService.WebDriver);
+                        if (thankLabel.Text.ToLower().Contains("thank"))
+                        {
+                            IncreaseAsinBought(asin);
+                            if (asin.NumberBought >= asin.BuyLimit)
+                            {
+                                UpdateAsinStatus(asin, BuyStatus.BOUGHT);
+                            }
+                            else
+                            {
+                                UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+                            }
+                            return;
+                        }
+                        else
+                        {
+                            await Task.Delay(repeatTime);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Debug(ex.Message);
+                        log.Error(ex.StackTrace);
+                        TakeSnapShot(buyService.WebDriver);
+                        await Task.Delay(repeatTime);
+                        continue;
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     log.Debug(ex.Message);
-                    log.Error(ex.StackTrace);
-                    TakeSnapShot(driver);
-                    return false;
+                    TakeSnapShot(buyService.WebDriver);
+                    //Clear status back to check
+                    UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+                    return;
                 }
-            }
-            catch (Exception ex)
-            {
-                log.Debug(ex.Message);
-                TakeSnapShot(driver);
-                return false;
+
             }
         }
 
-        private async void AddAsin(object sender, RoutedEventArgs e)
+        private async Task BuyItem(BuyItemModel asin)
         {
-            string limitPrice = txtLimitPrice.Text;
-            string limitBuy = txtBuyLimit.Text;
-
-            try
+            BuyService buyService = asin.BuyService;
+            if (buyService?.WebDriver == null)
             {
-                var item = new BuyItemModel
-                {
-                    Asin = txtFindAsin.Text,
-                    Name = txtName.Text,
-                    MaxPrice = string.IsNullOrEmpty(limitPrice) ? 0 : Double.Parse(limitPrice),
-                    BuyLimit = string.IsNullOrEmpty(limitBuy) ? 1 : int.Parse(limitBuy)
-                };
-
-                bool isAdd = false;
-                lock (lockObject)
-                {
-                    var existItem = AsinList.FirstOrDefault(it => it.Asin.Equals(item.Asin));
-                    if (existItem == null)
-                    {
-                        AsinList.Add(item);
-                        isAdd = true;
-                    }
-                    else
-                    {
-                        existItem.MaxPrice = item.MaxPrice;
-                    }
-                }
-                if (isAdd && (AsinList.Count - 1) % noPerBrowser == 0)
-                {
-                    isAmazonRunning = true;
-                    await Task.Run(() => checkAvailable((AsinList.Count - 1) / noPerBrowser));
-                }
+                var index = GetSmallestFreeIndex();
+                asin.BuyServiceIndex = index;
+                buyService = asin.BuyService = new BuyService(localBuyDir, index);
             }
-            catch (Exception ex)
-            {
-                log.Debug(ex.Message);
-                log.Error(ex.StackTrace);
-            }
-        }
 
-        private void UpdateAsinStatus(BuyItemModel asin, int status)
-        {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            string url = $@"{Amazon.HomeUrl}dp/{asin.Asin}";
+            while (true)
             {
+                //reopen browser if user close it
+                buyService.WebDriver.Navigate().GoToUrl(url);
                 try
                 {
-                    asin.Status = status;
+                    var buyBtn = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Amazon.BuyNowBtnId)));
+
+                    //Check price
+                    IWebElement priceBox = null;
+                    var listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceBuyBoxId));
+                    if (listPriceItem.Count <= 0)
+                        listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceNewBuyBoxId));
+
+                    double price = double.MaxValue;
+                    var logTime = String.Format("{0:d/M/yyyy HH:mm}", DateTime.Now);
+                    if (listPriceItem.Count > 0)
+                    {
+                        priceBox = listPriceItem[0];
+                        //remove $ 
+                        string priceValue = priceBox.Text;
+                        priceValue = priceValue.Substring(1);
+                        Double.TryParse(priceValue, out price);
+                        UpdateAsinPrice(asin, price);
+                    }
+
+                    if (asin.MaxPrice != 0 && price >= asin.MaxPrice)
+                    {
+                        AddLog(logTime + " " + asin.Name + " over price " + asin.Price);
+                        log.Info($"{asin.Name} {asin.Asin} {asin.Price} =>> over price");
+                        UpdateAsinStatus(asin, BuyStatus.OVER_PRICE);
+                        return;
+                    }
+
+                    AddLog(logTime + " " + asin.Name + " stock at" + asin.Price);
+                    log.Info($"{asin.Name} {asin.Asin} stock at {asin.Price}");
+                    buyBtn.Click();
+
+                    //Place order show in page
+                    try
+                    {
+                        //wait a moment if add cart pup up show
+                        try
+                        {
+                            await Task.Delay(500);
+                            var noThankButton = buyService.WebDriver.FindElement(By.Id(Amazon.NothankId));
+                            noThankButton.Click();
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+                        var element = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath($"id('{Amazon.BuyBtnInPageId}') | id('{Amazon.BuyIframeID}')")));
+                        var id = element.GetAttribute("id");
+                        if (element.GetAttribute("id").Equals(Amazon.BuyBtnInPageId))
+                        {
+                            element.Click();
+                        }
+                        else
+                        {
+                            buyService.WebDriver.SwitchTo().Frame(element);
+                            var placeOrder = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Amazon.OneClickPaidId)));
+                            placeOrder.Click();
+                            buyService.WebDriver.SwitchTo().DefaultContent();
+                        }
+
+                        var thankLabel = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(Amazon.BuyConfirmStatusPath)));
+                        await Task.Delay(300);
+                        TakeSnapShot(buyService.WebDriver);
+                        if (thankLabel.Text.ToLower().Contains("thank"))
+                        {
+                            IncreaseAsinBought(asin);
+                            if (asin.NumberBought >= asin.BuyLimit)
+                            {
+                                UpdateAsinStatus(asin, BuyStatus.BOUGHT);
+                            }
+                            else
+                            {
+                                UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+                            }
+                            return;
+                        }
+                        else
+                        {
+                            await Task.Delay(repeatTime);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Debug(ex.Message);
+                        log.Error(ex.StackTrace);
+                        TakeSnapShot(buyService.WebDriver);
+                        await Task.Delay(repeatTime);
+                        continue;
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //
+                    log.Debug(ex.Message);
+                    TakeSnapShot(buyService.WebDriver);
+                    //Clear status back to check
+                    UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+                    return;
                 }
-            }));
+            }
+        }
+        private void UpdateAsinStatus(BuyItemModel asin, BuyStatus status)
+        {
+            lock (lockObject)
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        asin.Status = status;
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                }));
+            }
         }
 
+        private void UpdateAsinPrice(BuyItemModel asin, double price)
+        {
+            lock (lockObject)
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        asin.Price = price;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }));
+            }
+        }
+        private void IncreaseAsinBought(BuyItemModel asin)
+        {
+            lock (lockObject)
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    try
+                    {
+                        asin.NumberBought++;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }));
+            }
+        }
         private void AddLog(string log)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -422,127 +432,6 @@ namespace AutoBuy
             }));
         }
 
-        private void ClearLog()
-        {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                Logs.Clear();
-            }));
-        }
-        private void UpdateAsinPrice(BuyItemModel asin, double price)
-        {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                try
-                {
-                    asin.Price = price;
-                }
-                catch (Exception)
-                {
-                    //
-                }
-
-            }));
-        }
-
-        private void Stop_Click(object sender, RoutedEventArgs e)
-        {
-            isAmazonRunning = false;
-            cancellSource?.Cancel();
-            cancellSource?.Dispose();
-            cancellSource = null;
-
-            checkDriver?.Dispose();
-            buyDriver?.Dispose();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            cancellSource?.Cancel();
-            checkDriver?.Dispose();
-            buyDriver?.Dispose();
-        }
-
-        private void MenuItem_Remove(object sender, RoutedEventArgs e)
-        {
-            if (ListAsin.SelectedItem != null)
-            {
-                var select = ListAsin.SelectedItem as BuyItemModel;
-                lock (lockObject)
-                {
-                    AsinList.Remove(select);
-                }
-            }
-        }
-
-        private void saveList_Click(object sender, RoutedEventArgs e)
-        {
-            //Save laste lbi objec
-            SaveList();
-        }
-
-        private void SaveList()
-        {
-            if (IsAmazon.IsChecked == true && AsinList.Count > 0)
-            {
-                TextWriter writer = null;
-                try
-                {
-                    var contentToWrite = JsonConvert.SerializeObject(AsinList);
-                    writer = new StreamWriter(amazonListItemFile, false);
-                    writer.Write(contentToWrite);
-                }
-                finally
-                {
-                    writer?.Close();
-                }
-
-            }
-        }
-
-        private async void loadList_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openDialog = new OpenFileDialog();
-            openDialog.Filter = "Json list|*.json"; ;
-            openDialog.InitialDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
-
-            if (true == openDialog.ShowDialog())
-            {
-                var filePath = openDialog.FileName;
-                if (IsAmazon.IsChecked == true)
-                {
-                    TextReader reader = null;
-                    try
-                    {
-                        reader = new StreamReader(filePath);
-                        var fileContent = reader.ReadToEnd();
-                        var tempList = JsonConvert.DeserializeObject<List<BuyItemModel>>(fileContent);
-                        foreach (var item in tempList)
-                        {
-                            var exist = AsinList.FirstOrDefault(i => i.Asin.Equals(item.Asin, StringComparison.OrdinalIgnoreCase));
-                            if (exist == null)
-                            {
-                                lock (lockObject)
-                                {
-                                    AsinList.Add(item);
-                                }
-                                if ((AsinList.Count - 1) % noPerBrowser == 0)
-                                {
-                                    isAmazonRunning = true;
-                                    await Task.Run(() => checkAvailable((AsinList.Count - 1) / noPerBrowser));
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        return;
-                    }
-                }
-
-            }
-        }
-
         private void ClearAllLogs(object sender, RoutedEventArgs e)
         {
             Logs.Clear();
@@ -550,11 +439,22 @@ namespace AutoBuy
 
         private async void SettingBrowser_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                checkDriver?.Dispose();
+                buyDriver?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+            }
+
             var driverService = ChromeDriverService.CreateDefaultService();
             driverService.HideCommandPromptWindow = true;
 
+
             //clear old cache file
-            for (int i = 1; i < 10; i++)
+            for (int i = 1; i < 30; i++)
             {
                 if (Directory.Exists(localBuyDir + i))
                 {
@@ -567,14 +467,14 @@ namespace AutoBuy
             }
 
             ChromeOptions buyOptions = new ChromeOptions();
-            buyOptions.AddArgument(userBuyDir);
+            buyOptions.AddArgument(CommonUtil.UserData + localBuyDir);
             buyDriver = new ChromeDriver(driverService, buyOptions);
 
             ChromeOptions checkOptions = new ChromeOptions();
-            checkOptions.AddArgument(userCheckDir);
+            checkOptions.AddArgument(CommonUtil.UserData + localCheckDir);
             checkDriver = new ChromeDriver(driverService, checkOptions);
 
-            await Task.Delay(TimeSpan.FromMinutes(2));
+            await Task.Delay(TimeSpan.FromMinutes(5));
             checkDriver?.Dispose();
             buyDriver?.Dispose();
         }
@@ -587,7 +487,7 @@ namespace AutoBuy
                 {
                     var ss = (driver as ITakesScreenshot).GetScreenshot();
                     var fileName = String.Format("{0:HH-mm-ss}", DateTime.Now) + ".jpg";
-                    var folderPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, ScreenShortDir, String.Format("{0:ddMMM}", DateTime.Now));
+                    var folderPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, Amazon.ScreenShortDir, String.Format("{0:ddMMM}", DateTime.Now));
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
@@ -603,5 +503,329 @@ namespace AutoBuy
             });
         }
 
+        private int GetSmallestFreeIndex()
+        {
+            for (int i = 0; ; i++)
+            {
+                var sv = AsinList.FirstOrDefault(a => a.BuyServiceIndex == i);
+                if (sv == null)
+                    return i;
+            }
+        }
+        private void MenuItem_Remove(object sender, RoutedEventArgs e)
+        {
+            if (ListAsin.SelectedItem != null)
+            {
+                var select = ListAsin.SelectedItem as BuyItemModel;
+                lock (lockObject)
+                {
+                    select.BuyService?.WebDriver?.Dispose();
+                    AsinList.Remove(select);
+                }
+            }
+        }
+
+        private void MenuItem_Detail(object sender, RoutedEventArgs e)
+        {
+            if (ListAsin.SelectedItem != null)
+            {
+                var selectedItem = ListAsin.SelectedItem as BuyItemModel;
+                var dialog = new DetailDiaglog();
+                dialog.Initialize(selectedItem, lockObject);
+                if (true == dialog.ShowDialog())
+                {
+                    //update data.
+                }
+            }
+        }
+        #endregion
+     
+        private async void Start_Click(object sender, RoutedEventArgs e)
+        {
+            if (RbtnAmazon.IsChecked == true)
+            {
+                AddLog("Start");
+                if (!isAmazonRunning && AsinList.Count > 0)
+                {
+                    isAmazonRunning = true;
+                    if (cancellSource == null)
+                    {
+                        cancellSource = new CancellationTokenSource();
+                        cancellToken = cancellSource.Token;
+                    }
+
+                    int no = (AsinList.Count - 1) / noPerBrowser;
+                    for (int i = 0; i <= no; i++)
+                    {
+                        await Task.Run(() => checkAvailable(i), cancellToken);
+                    }
+                }
+            }
+            else if (RbtnNewEgg.IsChecked == true)
+            {
+                NewEggChecking?.Start();
+            }
+            else if (RbtnBestBuy.IsChecked == true)
+            {
+                //TODO:
+            }
+
+        }
+
+        private async void AddAsin(object sender, RoutedEventArgs e)
+        {
+            string limitPrice = txtLimitPrice.Text;
+            string limitBuy = txtBuyLimit.Text;
+
+            try
+            {
+                var item = new BuyItemModel
+                {
+                    Asin = txtFindAsin.Text,
+                    Name = txtName.Text,
+                    MaxPrice = string.IsNullOrEmpty(limitPrice) ? 0 : Double.Parse(limitPrice),
+                    BuyLimit = string.IsNullOrEmpty(limitBuy) ? 1 : int.Parse(limitBuy),
+                };
+
+                if (RbtnAmazon.IsChecked == true)
+                {
+                    item.BuyServiceIndex = GetSmallestFreeIndex();
+                    item.BuyService = new BuyService(localBuyDir, item.BuyServiceIndex);
+                    
+                    bool isAdd = false;
+                    var existItem = AsinList.FirstOrDefault(it => it.Asin.Equals(item.Asin));
+                    if (existItem == null)
+                    {
+                        AsinList.Add(item);
+                        isAdd = true;
+                    }
+                    else
+                    {
+                        AddLog($"Item {item.Asin} is existed ");
+                    }
+
+                    if (isAdd && (AsinList.Count - 1) % noPerBrowser == 0)
+                    {
+                        isAmazonRunning = true;
+                        if (cancellSource == null)
+                        {
+                            cancellSource = new CancellationTokenSource();
+                            cancellToken = cancellSource.Token;
+                        }
+                        await Task.Run(() => checkAvailable((AsinList.Count - 1) / noPerBrowser));
+                    }
+
+                }
+                else if (RbtnNewEgg.IsChecked == true)
+                {
+                    NewEggChecking?.AddItem(item);
+               }
+                else if (RbtnBestBuy.IsChecked == true)
+                {
+                    BestBuyChecking?.AddItem(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Debug(ex.Message);
+                log.Error(ex.StackTrace);
+            }
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            if(RbtnAmazon.IsChecked == true)
+            {
+                isAmazonRunning = false;
+                cancellSource?.Cancel();
+                cancellSource?.Dispose();
+                cancellSource = null;
+
+                checkDriver?.Dispose();
+                buyDriver?.Dispose();
+                AddLog("Stop");
+            }
+            else if (RbtnNewEgg.IsChecked == true)
+            {
+                NewEggChecking?.Stop();
+            }
+            else if (RbtnBestBuy.IsChecked == true)
+            {
+                BestBuyChecking?.Stop();
+            }
+
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            cancellSource?.Cancel();
+            cancellSource?.Dispose();
+
+            checkDriver?.Dispose();
+            buyDriver?.Dispose();
+            foreach (var serv in AsinList)
+            {
+                serv?.BuyService?.WebDriver?.Dispose();
+            }
+
+            NewEggChecking?.Close();
+            BestBuyChecking?.Close();
+        }
+
+        private void saveList_Click(object sender, RoutedEventArgs e)
+        {
+            //Save last list object
+            SaveList();
+        }
+
+        private void SaveList()
+        {
+            if (RbtnAmazon.IsChecked == true && AsinList.Count > 0)
+            {
+                TextWriter writer = null;
+                try
+                {
+                    var contentToWrite = JsonConvert.SerializeObject(AsinList);
+                    writer = new StreamWriter(Amazon.AmazonListItemFile, false);
+                    writer.Write(contentToWrite);
+                }
+                finally
+                {
+                    writer?.Close();
+                }
+
+            }else if(RbtnNewEgg.IsChecked == true)
+            {
+                NewEggChecking.SaveList();
+            }else if(RbtnBestBuy.IsChecked == true)
+            {
+                BestBuyChecking.SaveList();
+            }
+        }
+
+        private async void loadList_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Filter = "Json list|*.json"; ;
+            openDialog.InitialDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+
+            if (true == openDialog.ShowDialog())
+            {
+                var filePath = openDialog.FileName;
+                if (RbtnAmazon.IsChecked == true)
+                {
+                    TextReader reader = null;
+                    try
+                    {
+                        reader = new StreamReader(filePath);
+                        var fileContent = reader.ReadToEnd();
+                        var tempList = JsonConvert.DeserializeObject<List<BuyItemModel>>(fileContent);
+                        foreach (var item in tempList)
+                        {
+                            var exist = AsinList.FirstOrDefault(i => i.Asin.Equals(item.Asin, StringComparison.OrdinalIgnoreCase));
+                            if (exist == null)
+                            {
+                                item.BuyServiceIndex = GetSmallestFreeIndex();
+                                item.BuyService = new BuyService(localBuyDir, item.BuyServiceIndex);
+                                AsinList.Add(item);
+                                if ((AsinList.Count - 1) % noPerBrowser == 0)
+                                {
+                                    isAmazonRunning = true;
+                                    if(cancellSource == null)
+                                    {
+                                        cancellSource = new CancellationTokenSource();
+                                        cancellToken = cancellSource.Token;
+                                    }
+                                    
+                                    await Task.Run(() => checkAvailable((AsinList.Count - 1) / noPerBrowser));
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                    }
+                }
+                else if (RbtnNewEgg.IsChecked == true)
+                {
+                    NewEggChecking.LoadList(filePath);
+                }
+                else if (RbtnBestBuy.IsChecked == true)
+                {
+                    BestBuyChecking.LoadList(filePath);
+                }
+
+            }
+        }
+        private void NewEggRemove(object sender, RoutedEventArgs e)
+        {
+            var select = NewEggList.SelectedItem as BuyItemModel;
+            if (select != null)
+                NewEggChecking.RemoveItem(select);
+        }
+
+        private void NewEggDetail(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = NewEggList.SelectedItem as BuyItemModel;
+            var dialog = new DetailDiaglog();
+            dialog.Initialize(selectedItem, NewEggChecking.LockObject);
+            if (true == dialog.ShowDialog())
+            {
+                //update data.
+            }
+        }
+
+        private void NewEggClearLog(object sender, RoutedEventArgs e)
+        {
+            NewEggChecking.ClearLog();
+        }
+
+        private void BestBuyRemove(object sender, RoutedEventArgs e)
+        {
+            var select = BestBuyList.SelectedItem as BuyItemModel;
+            if (select != null)
+                BestBuyChecking.RemoveItem(select);
+
+        }
+
+        private void SetTimeStamp_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int timeStam = int.Parse(txtTimeStamp.Text);
+                if(RbtnAmazon.IsChecked == true)
+                {
+                    repeatTime = TimeSpan.FromSeconds(timeStam);
+                }else if(RbtnNewEgg.IsChecked == true)
+                {
+                    NewEggChecking.repeatTime = TimeSpan.FromSeconds(timeStam);
+                }else if(RbtnBestBuy.IsChecked == true)
+                {
+                    BestBuyChecking.repeatTime = TimeSpan.FromSeconds(timeStam);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+            }
+
+        }
+
+        private void BestBuyDetail(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = BestBuyList.SelectedItem as BuyItemModel;
+            var dialog = new DetailDiaglog();
+            dialog.Initialize(selectedItem, BestBuyChecking.LockObject);
+            if (true == dialog.ShowDialog())
+            {
+                //update data.
+            }
+        }
+        private void BestBuyClearLog(object sender, RoutedEventArgs e)
+        {
+            BestBuyChecking.ClearLog();
+        }
     }
 }

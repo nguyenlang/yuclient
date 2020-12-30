@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:AutoBuy"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <local:StatusToColor x:Key="StatusToColor"/>
+        <local:StatusToText x:Key="StatusToText"/>
     </Application.Resources>
 </Application>
