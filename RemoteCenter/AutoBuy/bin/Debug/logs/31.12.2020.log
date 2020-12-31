@@ -1,0 +1,53 @@
+2020-12-31 11:14:09,088 [10] INFO  AutoBuy.MainWindow [(null)] - mouse B07SCY7H3W stock at 9.99
+2020-12-31 11:14:13,056 [10] DEBUG AutoBuy.MainWindow [(null)] - no such element: Unable to locate element: {"method":"css selector","selector":"#turbo\-checkout\-iframe"}
+  (Session info: chrome=87.0.4280.88)
+2020-12-31 11:14:13,121 [10] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.FindElement(String mechanism, String value)
+   at AutoBuy.MainWindow.<BuyItem>d__36.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 330
+2020-12-31 11:14:27,673 [10] INFO  AutoBuy.MainWindow [(null)] - mouse B07SCY7H3W stock at 9.99
+2020-12-31 11:16:56,277 [14] INFO  AutoBuy.MainWindow [(null)] - mouse B07SCY7H3W stock at 9.99
+2020-12-31 11:18:39,562 [14] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2020-12-31 11:18:39,592 [14] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__36.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 340
+2020-12-31 11:18:54,761 [14] INFO  AutoBuy.MainWindow [(null)] - mouse B07SCY7H3W stock at 9.99
+2020-12-31 11:18:57,875 [14] DEBUG AutoBuy.MainWindow [(null)] - no such element: Unable to locate element: {"method":"css selector","selector":"#turbo\-checkout\-iframe"}
+  (Session info: chrome=87.0.4280.88)
+2020-12-31 11:18:57,897 [14] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.FindElement(String mechanism, String value)
+   at AutoBuy.MainWindow.<BuyItem>d__36.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 330
+2020-12-31 11:19:10,408 [14] INFO  AutoBuy.MainWindow [(null)] - mouse B07SCY7H3W stock at 9.99
+2020-12-31 11:19:13,809 [14] DEBUG AutoBuy.MainWindow [(null)] - no such element: Unable to locate element: {"method":"css selector","selector":"#turbo\-checkout\-iframe"}
+  (Session info: chrome=87.0.4280.88)
+2020-12-31 11:19:13,841 [14] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.FindElement(String mechanism, String value)
+   at AutoBuy.MainWindow.<BuyItem>d__36.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 330
+2020-12-31 11:25:01,462 [10] INFO  AutoBuy.MainWindow [(null)] - mouse B07SCY7H3W stock at 9.99
+2020-12-31 11:31:20,679 [1] ERROR AutoBuy.BestBuyCheckingModel [(null)] - invalid argument: user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+2020-12-31 11:33:48,569 [1] ERROR AutoBuy.BuyService [(null)] - invalid argument: user data directory is already in use, please specify a unique value for --user-data-dir argument, or don't use --user-data-dir
+2020-12-31 11:33:48,733 [1] ERROR AutoBuy.BuyService [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.StartSession(ICapabilities desiredCapabilities)
+   at OpenQA.Selenium.Remote.RemoteWebDriver..ctor(ICommandExecutor commandExecutor, ICapabilities desiredCapabilities)
+   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(ChromeDriverService service, ChromeOptions options, TimeSpan commandTimeout)
+   at AutoBuy.BuyService..ctor(String localBuyDir, Int32 order, PageLoadStrategy pageLoad) in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\BuyService.cs:line 44
+2020-12-31 11:35:15,670 [10] INFO  AutoBuy.MainWindow [(null)] - fuma B07QMK5R45 stock at 59.99
+2020-12-31 11:35:17,521 [10] DEBUG AutoBuy.MainWindow [(null)] - element click intercepted: Element <input id="buy-now-button" name="submit.buy-now" data-hover="Select <b>__dims__" class="a-button-input" type="submit" aria-labelledby="submit.buy-now-announce"> is not clickable at point (852, 380). Other element would receive the click: <div class="a-modal-scroller a-declarative" data-action="a-popover-floating-close" style="padding-bottom: 0px; visibility: visible;">...</div>
+  (Session info: chrome=87.0.4280.88)
+2020-12-31 11:35:31,187 [13] INFO  AutoBuy.MainWindow [(null)] - fuma B07QMK5R45 stock at 59.99
+2020-12-31 11:35:33,129 [13] DEBUG AutoBuy.MainWindow [(null)] - element click intercepted: Element <input id="buy-now-button" name="submit.buy-now" data-hover="Select <b>__dims__" class="a-button-input" type="submit" aria-labelledby="submit.buy-now-announce"> is not clickable at point (852, 180). Other element would receive the click: <div class="a-modal-scroller a-declarative" data-action="a-popover-floating-close" style="padding-bottom: 0px; visibility: visible;">...</div>
+  (Session info: chrome=87.0.4280.88)
+2020-12-31 11:35:46,911 [10] INFO  AutoBuy.MainWindow [(null)] - fuma B07QMK5R45 stock at 59.99
+2020-12-31 11:35:54,452 [10] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2020-12-31 11:35:54,506 [10] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__36.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 330
+2020-12-31 11:36:08,537 [10] INFO  AutoBuy.MainWindow [(null)] - fuma B07QMK5R45 stock at 59.99
+2020-12-31 11:36:15,904 [10] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2020-12-31 11:36:15,929 [10] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__36.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 330
+2020-12-31 11:36:29,544 [10] DEBUG AutoBuy.MainWindow [(null)] - invalid session id

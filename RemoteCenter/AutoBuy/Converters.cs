@@ -66,4 +66,32 @@ namespace AutoBuy
             return null;
         }
     }
+
+    public class StatusToTextNoti : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            BuyStatus status = (BuyStatus)value;
+
+            switch (status)
+            {
+                case BuyStatus.BOUGHT:
+                    return "Noti Sent";
+                case BuyStatus.OVER_PRICE:
+                    return "Over price";
+                case BuyStatus.BUYING:
+                    return "Sending...";
+                case BuyStatus.CHECKING:
+                    return "Checking...";
+                case BuyStatus.OUT_OF_STOCK:
+                    return "Out of stock";
+            }
+            return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
 }

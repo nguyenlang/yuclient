@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using log4net;
 using log4net.Config;
+using SeleniumExtras.WaitHelpers;
 
 namespace AutoBuy
 {
@@ -46,7 +47,7 @@ namespace AutoBuy
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public NewEggCheckingModel NewEggChecking { set; get; }
-        public NewEggCheckingModel BestBuyChecking { set; get; }
+        public BestBuyCheckingModel BestBuyChecking { set; get; }
 
         public MainWindow()
         {
@@ -54,6 +55,8 @@ namespace AutoBuy
             this.DataContext = this;
 
             NewEggChecking = new NewEggCheckingModel();
+            BestBuyChecking = new BestBuyCheckingModel();
+
             string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             localCheckDir = userPath + Amazon.UserCheckDir;
             localBuyDir = userPath + Amazon.UserBuyDir;
@@ -107,7 +110,7 @@ namespace AutoBuy
 
             while (true)
             {
-                if (cancellToken.IsCancellationRequested || startIndex >= AsinList.Count) //stop thread
+                if (cancellToken.IsCancellationRequested || startIndex >= AsinList.Count || AsinList.Count == 0) //stop thread
                 {
                     checkDriver?.Dispose();
                     return;
@@ -132,7 +135,7 @@ namespace AutoBuy
                     checkDriver.Navigate().GoToUrl(url);
 
                     await Task.Delay(delayToLoadElement);
-                    var buyBtn = checkDriver.FindElement(By.Id(Amazon.BuyNowBtnId));
+                    var buyBtn = checkDriver.FindElement(By.Id("buy-now-button"));
                     UpdateAsinStatus(asin, BuyStatus.BUYING);
                     Task.Run(() => BuyItem(asin));
                     await Task.Delay(repeatTime);
@@ -164,13 +167,13 @@ namespace AutoBuy
                 try
                 {
                     await Task.Delay(delayToLoadElement);
-                    var buyBtn = buyService.WebDriver.FindElement(By.Id(Amazon.BuyNowBtnId));
+                    var buyBtn = buyService.WebDriver.FindElement(By.Id("buy-now-button"));
 
                     //Check price
                     IWebElement priceBox = null;
-                    var listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceBuyBoxId));
+                    var listPriceItem = buyService.WebDriver.FindElements(By.Id("price_inside_buybox"));
                     if (listPriceItem.Count <= 0)
-                        listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceNewBuyBoxId));
+                        listPriceItem = buyService.WebDriver.FindElements(By.Id("newBuyBoxPrice"));
 
                     double price = double.MaxValue;
                     var logTime = String.Format("{0:d/M/yyyy HH:mm}", DateTime.Now);
@@ -199,8 +202,8 @@ namespace AutoBuy
                     try
                     {
                         await Task.Delay(6000);
-                        var element = buyService.WebDriver.FindElement(By.XPath($"id('{Amazon.BuyBtnInPageId}') | id('{Amazon.BuyIframeID}')"));
-                        if (element.GetAttribute("id").Equals(Amazon.BuyBtnInPageId))
+                        var element = buyService.WebDriver.FindElement(By.XPath($"id('submitOrderButtonId') | id('turbo-checkout-iframe')"));
+                        if (element.GetAttribute("id").Equals("submitOrderButtonId"))
                         {
                             element.Click();
                         }
@@ -208,12 +211,12 @@ namespace AutoBuy
                         {
                             buyService.WebDriver.SwitchTo().Frame(element);
                             await Task.Delay(3000);
-                            var placeOrder = buyService.WebDriver.FindElement(By.Id(Amazon.OneClickPaidId));
+                            var placeOrder = buyService.WebDriver.FindElement(By.Id("turbo-checkout-place-order-button"));
                             placeOrder.Click();
                             buyService.WebDriver.SwitchTo().DefaultContent();
                         }
                         await Task.Delay(3000);
-                        var thankLabel = buyService.WebDriver.FindElement(By.XPath(Amazon.BuyConfirmStatusPath));
+                        var thankLabel = buyService.WebDriver.FindElement(By.XPath("//*[@id=\"widget-purchaseConfirmationStatus\"]/div/h4"));
                         TakeSnapShot(buyService.WebDriver);
                         if (thankLabel.Text.ToLower().Contains("thank"))
                         {
@@ -271,13 +274,13 @@ namespace AutoBuy
                 buyService.WebDriver.Navigate().GoToUrl(url);
                 try
                 {
-                    var buyBtn = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Amazon.BuyNowBtnId)));
+                    var buyBtn = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("buy-now-button")));
 
                     //Check price
                     IWebElement priceBox = null;
-                    var listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceBuyBoxId));
+                    var listPriceItem = buyService.WebDriver.FindElements(By.Id("price_inside_buybox"));
                     if (listPriceItem.Count <= 0)
-                        listPriceItem = buyService.WebDriver.FindElements(By.Id(Amazon.PriceNewBuyBoxId));
+                        listPriceItem = buyService.WebDriver.FindElements(By.Id("newBuyBoxPrice"));
 
                     double price = double.MaxValue;
                     var logTime = String.Format("{0:d/M/yyyy HH:mm}", DateTime.Now);
@@ -306,33 +309,35 @@ namespace AutoBuy
                     //Place order show in page
                     try
                     {
-                        //wait a moment if add cart pup up show
-                        try
-                        {
-                            await Task.Delay(500);
-                            var noThankButton = buyService.WebDriver.FindElement(By.Id(Amazon.NothankId));
-                            noThankButton.Click();
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-                        var element = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath($"id('{Amazon.BuyBtnInPageId}') | id('{Amazon.BuyIframeID}')")));
-                        var id = element.GetAttribute("id");
-                        if (element.GetAttribute("id").Equals(Amazon.BuyBtnInPageId))
+                        //check buy popup window
+                        var element = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.XPath($"//*[contains(@id,'a-popover-header-') or @id='submitOrderButtonId']")));
+                        if (element.GetAttribute("id").Equals("submitOrderButtonId"))
                         {
                             element.Click();
                         }
                         else
                         {
-                            buyService.WebDriver.SwitchTo().Frame(element);
-                            var placeOrder = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Amazon.OneClickPaidId)));
-                            placeOrder.Click();
-                            buyService.WebDriver.SwitchTo().DefaultContent();
+                            var title = element.Text;
+                            if(title.ToLower().Contains("add to your order"))
+                            {
+                                //Find nothank button
+                                var nothanksBtn = buyService.WebDriver.FindElements(By.XPath("//*[contains(text(),'No Thanks')]"));
+                                nothanksBtn?[0].Click();
+                            }
+                            else
+                            {
+                                //find and switch to iframe
+                                var buyFrame = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("turbo-checkout-iframe")));
+                                buyService.WebDriver.SwitchTo().Frame(buyFrame);
+                                
+                                var placeOrderBtn = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("turbo-checkout-place-order-button")));
+                                placeOrderBtn.Click();
+                                buyService.WebDriver.SwitchTo().DefaultContent();
+                            }
+                            
                         }
 
-                        var thankLabel = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(Amazon.BuyConfirmStatusPath)));
+                        var thankLabel = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"widget-purchaseConfirmationStatus\"]/div/h4")));
                         await Task.Delay(300);
                         TakeSnapShot(buyService.WebDriver);
                         if (thankLabel.Text.ToLower().Contains("thank"))
@@ -485,7 +490,7 @@ namespace AutoBuy
             }
             else if (RbtnBestBuy.IsChecked == true)
             {
-                BestBuyChecking?.SettingBrowser_Click();
+                
             }
         }
 
@@ -610,7 +615,10 @@ namespace AutoBuy
                     var existItem = AsinList.FirstOrDefault(it => it.Asin.Equals(item.Asin));
                     if (existItem == null)
                     {
-                        AsinList.Add(item);
+                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                        {
+                            AsinList.Add(item);
+                        }));
                         isAdd = true;
                     }
                     else
@@ -744,7 +752,10 @@ namespace AutoBuy
                             {
                                 item.BuyServiceIndex = GetSmallestFreeIndex();
                                 item.BuyService = new BuyService(localBuyDir, item.BuyServiceIndex);
-                                AsinList.Add(item);
+                                Application.Current.Dispatcher.Invoke(new Action(() =>
+                                {
+                                    AsinList.Add(item);
+                                }));
                                 if ((AsinList.Count - 1) % noPerBrowser == 0)
                                 {
                                     isAmazonRunning = true;
@@ -781,6 +792,14 @@ namespace AutoBuy
             if (select != null)
                 NewEggChecking.RemoveItem(select);
         }
+
+        private void NeweggTurnOnNoti(object sender, RoutedEventArgs e)
+        {
+            var select = NewEggList.SelectedItem as BuyItemModel;
+            if (select != null)
+                NewEggChecking.TurnOnNoti(select);
+        }
+
 
         private void NewEggDetail(object sender, RoutedEventArgs e)
         {
@@ -840,6 +859,12 @@ namespace AutoBuy
                 //update data.
             }
         }
+        private void BestBuyTurnOnNoti(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = BestBuyList.SelectedItem as BuyItemModel;
+            BestBuyChecking.TurnOnNoti(selectedItem);
+        }
+
         private void BestBuyClearLog(object sender, RoutedEventArgs e)
         {
             BestBuyChecking.ClearLog();
@@ -874,16 +899,7 @@ namespace AutoBuy
             }
             else if (RbtnBestBuy.IsChecked == true)
             {
-                var user = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                var bestbuyDir = user + BestBuy.UserDir;
-                if (!Directory.Exists(bestbuyDir))
-                {
-                    Application.Current.Dispatcher.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show("Setting browser for bestbuy first");
-                    }));
-                    return false;
-                }
+                
             }
             return true;
         }

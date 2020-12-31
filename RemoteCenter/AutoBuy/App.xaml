@@ -6,5 +6,6 @@
     <Application.Resources>
         <local:StatusToColor x:Key="StatusToColor"/>
         <local:StatusToText x:Key="StatusToText"/>
+        <local:StatusToTextNoti x:Key="StatusToTextNoti"/>
     </Application.Resources>
 </Application>

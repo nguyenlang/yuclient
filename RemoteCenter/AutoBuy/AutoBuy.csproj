@@ -81,6 +81,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BestBuyCheckingModel.cs" />
+    <Compile Include="ZaloHelper.cs" />
     <Page Include="DetailDiaglog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -106,7 +108,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CheckingModel.cs" />
+    <Compile Include="NewEggCheckingModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

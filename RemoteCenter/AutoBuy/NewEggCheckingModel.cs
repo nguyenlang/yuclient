@@ -46,7 +46,7 @@ namespace AutoBuy
         public TimeSpan delayToLoadElement = TimeSpan.FromSeconds(3);
 
         private IWebDriver _settingWebDriver = null;
-        public NewEggCheckingModel(int platform = 0)
+        public NewEggCheckingModel()
         {
             InitialPath();
             _localBuyDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + _userDir;
@@ -350,7 +350,7 @@ namespace AutoBuy
         {
             ZaloHelper.SendZaloMessage($"{asin.Name} {asin.Asin} stock at {asin.Price} buy it: {_homeUrl}p/{asin.Asin}");
             //await Task.Delay(TimeSpan.FromMinutes(10)); // wait 10 minute before check again
-            //UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+            UpdateAsinStatus(asin, BuyStatus.BOUGHT);
         }
 
         public void AddItem(BuyItemModel buyItem)
@@ -587,7 +587,9 @@ namespace AutoBuy
             }
         }
 
-        //Zalo
-
+        internal void TurnOnNoti(BuyItemModel asin)
+        {
+            UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+        }
     }
 }
