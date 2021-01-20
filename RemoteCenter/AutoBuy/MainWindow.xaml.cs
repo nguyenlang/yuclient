@@ -324,17 +324,14 @@ namespace AutoBuy
                                 var nothanksBtn = buyService.WebDriver.FindElements(By.XPath("//*[contains(text(),'No Thanks')]"));
                                 nothanksBtn?[0].Click();
                             }
-                            else
-                            {
-                                //find and switch to iframe
-                                var buyFrame = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("turbo-checkout-iframe")));
-                                buyService.WebDriver.SwitchTo().Frame(buyFrame);
-                                
-                                var placeOrderBtn = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("turbo-checkout-place-order-button")));
-                                placeOrderBtn.Click();
-                                buyService.WebDriver.SwitchTo().DefaultContent();
-                            }
-                            
+
+                            //find and switch to iframe
+                            var buyFrame = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("turbo-checkout-iframe")));
+                            buyService.WebDriver.SwitchTo().Frame(buyFrame);
+
+                            var placeOrderBtn = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.Id("turbo-checkout-place-order-button")));
+                            placeOrderBtn.Click();
+                            buyService.WebDriver.SwitchTo().DefaultContent();
                         }
 
                         var thankLabel = buyService.WebDriverWait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id=\"widget-purchaseConfirmationStatus\"]/div/h4")));

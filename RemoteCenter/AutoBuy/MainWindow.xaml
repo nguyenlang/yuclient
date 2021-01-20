@@ -264,7 +264,7 @@
             <Button x:Name="SetTimeStamp"
                     Width="90" Height="25"
                     Content="Set"
-                    Margin="5 5 390 5"
+                    Margin="5 5 370 5"
                     Click="SetTimeStamp_Click"/>
             <CheckBox x:Name="chkBoxHeadless" IsChecked="False"
                           VerticalAlignment="Center"

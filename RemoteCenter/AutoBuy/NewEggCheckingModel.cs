@@ -23,18 +23,23 @@ namespace AutoBuy
         private static readonly log4net.ILog logs =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private string _homeUrl;
-        private string _avaiableSignalXPath;
-        private string _priceSignal;
-        private string _captureScreenFolder;
-        private string _listItemFileName;
-        private string _userDir;
+        private string _homeUrl = "https://www.newegg.com/"; //https://www.newegg.com/p/N82E16819113497;
+        private string _loginUrl = "https://secure.newegg.com/NewMyAccount/AccountLogin.aspx?nextpage=https%3A%2F%2Fwww.newegg.com%2F";
 
+        private string _avaiableSignalXPath = "//*[@id=\"ProductBuy\"]/div/div[2]/button";
+        private string _priceSignal = ".product-price .price-current";
         private string _localBuyDir;
 
-        IWebDriver _webDriver = null;
+        IWebDriver _webCheckDriver = null;
+        IWebDriver _webBuyDriver = null;
+
         public object LockObject = new object();
         private bool _isRunning = false;
+        private bool _isBuying = false;
+
+        private string _account = "nguyen.lang2505@gmail.com";
+        private string _passw = "Jacky1988";
+
         CancellationTokenSource _cancelSource;
         CancellationToken _cancelToken;
 
@@ -45,11 +50,11 @@ namespace AutoBuy
         public TimeSpan repeatTime = TimeSpan.FromSeconds(20);
         public TimeSpan delayToLoadElement = TimeSpan.FromSeconds(3);
 
-        private IWebDriver _settingWebDriver = null;
+        public TimeSpan RefreshBuyDriverTime = TimeSpan.FromMinutes(30);
+
         public NewEggCheckingModel()
         {
-            InitialPath();
-            _localBuyDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + _userDir;
+            _localBuyDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + NewEgg.UserDir;
             InitialWebDriver();
         }
 
@@ -64,36 +69,21 @@ namespace AutoBuy
 
                 var driverService = ChromeDriverService.CreateDefaultService();
                 driverService.HideCommandPromptWindow = true;
-                _webDriver = new ChromeDriver(driverService, options);
+                _webCheckDriver = new ChromeDriver(driverService, options);
 
+                //buying driver
+                ChromeOptions buyOptions = new ChromeOptions();
+                buyOptions.AddArgument(CommonUtil.UserData + _localBuyDir);
+                _webBuyDriver = new ChromeDriver(driverService, buyOptions);
+
+                //Refresh task
+                RefreshBuyChromeDriver();
+                //Task.Run(() => RefreshBuyChromeDriver());
             }
             catch (Exception e)
             {
                 logs.Error(e.Message);
             }
-        }
-
-        public void InitialPath()
-        {
-            _homeUrl = NewEgg.HomrUrl;
-            _avaiableSignalXPath = NewEgg.AvaiableSignalPath;
-            _priceSignal = NewEgg.PriceSignalCSS;
-            _listItemFileName = NewEgg.NewEggListItemFile;
-            _userDir = NewEgg.UserDir;
-            _captureScreenFolder = NewEgg.ScreenShortDir;
-        }
-        public void DestroyWebDriver()
-        {
-            try
-            {
-                _webDriver?.Dispose();
-                _webDriver = null;
-            }
-            catch (Exception e)
-            {
-                logs.Error(e.Message);
-            }
-
         }
 
         private void AddLog(string log)
@@ -108,6 +98,46 @@ namespace AutoBuy
         public void ClearLog()
         {
             LogList?.Clear();
+        }
+
+        private async void RefreshBuyChromeDriver() 
+        {
+            try
+            {
+                if (!_isBuying)
+                {
+                    _webBuyDriver?.Navigate().GoToUrl(_loginUrl);
+                    await Task.Delay(TimeSpan.FromSeconds(5));
+                    var emailBox = _webBuyDriver.FindElements(By.Id("labeled-input-signEmail"));
+                    if (emailBox.Count > 0) //login new 
+                    {
+                        emailBox[0].SendKeys(_account);
+                        await Task.Delay(50);
+
+                        var submitBtn = _webBuyDriver.FindElement(By.Id("signInSubmit"));
+                        submitBtn.Click();
+                        await Task.Delay(1000);
+
+                        var passwBox = _webBuyDriver.FindElement(By.Id("labeled-input-password"));
+                        passwBox.SendKeys(_passw);
+                        await Task.Delay(100);
+
+                        var signInSumbit = _webBuyDriver.FindElement(By.Id("signInSubmit"));
+                        signInSumbit.Click();
+                    }
+                    else //login again if it requests (already login)
+                    {
+                        await Task.Delay(1500);
+                        var signInSumbit = _webBuyDriver.FindElement(By.Id("signInSubmit"));
+                        signInSumbit.Click();
+                    }
+                    EmptyCard();
+                }
+            }
+            catch (Exception e)
+            {
+                logs.Error(e.Message);
+            }
         }
 
         private async void checkAvailable()
@@ -129,23 +159,23 @@ namespace AutoBuy
                 asin = CheckList[index];
                 index++;
 
-                if (asin.Status == BuyStatus.BUYING) continue;
+                if (asin.Status == BuyStatus.BUYING || asin.Status == BuyStatus.BOUGHT) continue;
                 UpdateAsinStatus(asin, BuyStatus.CHECKING);
 
                 try
                 {
                     string url = $@"{_homeUrl}p/{asin.Asin}";
-                    _webDriver.Navigate().GoToUrl(url);
+                    _webCheckDriver.Navigate().GoToUrl(url);
 
                     await Task.Delay(delayToLoadElement);
-                    var buyBtn = _webDriver.FindElement(By.XPath(_avaiableSignalXPath));
+                    var buyBtn = _webCheckDriver.FindElement(By.XPath(_avaiableSignalXPath));
 
                     if (buyBtn.Text.ToLower().Contains("add to cart"))
                     {
 
                         double priceVal = double.MaxValue;
                         //get price
-                        var priceList = _webDriver.FindElements(By.CssSelector(_priceSignal));
+                        var priceList = _webCheckDriver.FindElements(By.CssSelector(_priceSignal));
                         foreach (var el in priceList)
                         {
                             double checkPrice = priceVal;
@@ -173,9 +203,8 @@ namespace AutoBuy
                             UpdateAsinStatus(asin, BuyStatus.BUYING);
                             AddLog($"{asin.Name} {asin.Asin} stock at {asin.Price}");
                             Task.Run(() => SendNotifyAsync(asin));
-
-                            //asin.CancelSource = new CancellationTokenSource();
-                            //Task.Run(() => BuyItemAsync(asin), asin.CancelSource.Token);
+                            await Task.Run(() => BuyItemAsync(asin), _cancelToken);
+                            _isBuying = false;
                         }
                     }
 
@@ -190,27 +219,23 @@ namespace AutoBuy
             }
         }
 
-        private async Task BuyItemAsync(BuyItemModel asin)
+        private async void EmptyCard()
         {
-            //Create buydriver
-            var buyService = asin.BuyService = new BuyService(_localBuyDir, asin.BuyServiceIndex, PageLoadStrategy.None);
-            string url = $@"{_homeUrl}p/{asin.Asin}";
-
             //Clear cart
             try
             {
-                buyService.WebDriver.Navigate().GoToUrl(_homeUrl);
-
-                await Task.Delay(1000);
-                var cartBtn = buyService.WebDriver.FindElement(By.XPath("//*[@aria-label= 'Shopping Cart']"));
-                cartBtn.Click();
-
-                await Task.Delay(1000);
-                var removeAll = buyService.WebDriver.FindElement(By.XPath("//*[@data-target= '#Popup_Remove_All']"));
-                removeAll.Click();
+                _webBuyDriver.Navigate().GoToUrl(_homeUrl);
 
                 await Task.Delay(2000);
-                var confirmReAll = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(text(),'Yes, Remove all')]")));
+                var cartBtn = _webBuyDriver.FindElement(By.XPath("//*[@aria-label= 'Shopping Cart']"));
+                cartBtn.Click();
+
+                await Task.Delay(2000);
+                var removeAll = _webBuyDriver.FindElement(By.XPath("//*[@data-target= '#Popup_Remove_All']"));
+                removeAll.Click();
+
+                await Task.Delay(3000);
+                var confirmReAll = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'Yes, Remove all')]"));
                 confirmReAll.Click();
                 //OK done
             }
@@ -218,74 +243,139 @@ namespace AutoBuy
             {
                 logs.Error(ex.Message);
             }
+        }
+
+        private async Task BuyItemAsync(BuyItemModel asin)
+        {
+            //Create buydriver
+            //var buyService = asin.BuyService = new BuyService(_localBuyDir, asin.BuyServiceIndex, PageLoadStrategy.None);
+            _isBuying = true;
+            string url = $@"{_homeUrl}p/{asin.Asin}";
 
             while (true)
             {
-                if (asin.CancelSource.IsCancellationRequested)
+                if (_cancelToken.IsCancellationRequested)
                 {
-                    asin.BuyService.Close();
                     return;
                 }
-
-                buyService.WebDriver.Navigate().GoToUrl(url);
+                _webBuyDriver.Navigate().GoToUrl(url);
 
                 try
                 {
                     await Task.Delay(4000);
-                    //var buyBtn = buyService.WebDriverWait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(_avaiableSignalXPath)));
-                    var buyBtn = buyService.WebDriver.FindElement(By.XPath(_avaiableSignalXPath));
+                    var buyBtn = _webBuyDriver.FindElement(By.XPath(_avaiableSignalXPath));
                     if (!buyBtn.Text.ToLower().Contains("add to cart"))
                     {
-                        asin.BuyService.Close();
                         UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
                         return;
                     }
                     buyBtn.Click();
 
+                    double priceVal = double.MaxValue;
+                    //get price
+                    var priceList = _webCheckDriver.FindElements(By.CssSelector(_priceSignal));
+                    foreach (var el in priceList)
+                    {
+                        double checkPrice = priceVal;
+                        string content = el.Text;
+                        if (!string.IsNullOrEmpty(content))
+                        {
+                            content = content.Substring(1);
+                            Double.TryParse(content, out checkPrice);
+                            if (checkPrice < priceVal)
+                            {
+                                priceVal = checkPrice;
+                                UpdateAsinPrice(asin, priceVal);
+                            }
+                        }
+                    }
+
+                    if (asin.MaxPrice != 0 && priceVal >= asin.MaxPrice)
+                    {
+                        AddLog(asin.Name + " over price " + asin.Price);
+                        logs.Info($"{asin.Name} {asin.Asin} stock at {asin.Price} => over price");
+                        UpdateAsinStatus(asin, BuyStatus.OVER_PRICE);
+                        return;
+                    }
+
                     try
                     {
                         await Task.Delay(4000);
-                        var element = buyService.WebDriver.FindElement(By.XPath("//*[contains(text(),'No, thanks') or contains(text(),'View Cart')]"));
+                        var element = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'No, thanks') or contains(text(),'View Cart')]"));
                         if (element.Text.ToLower().Contains("no, thanks"))
                         {
                             element.Click();
                             await Task.Delay(1000);
-                            var viewcart = buyService.WebDriver.FindElement(By.XPath("//*[contains(text(),'View Cart')]"));
+                            var viewcart = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'View Cart')]"));
                             viewcart.Click();
                         }
                         else
                         {
                             element.Click();
                         }
-                        await Task.Delay(3000);
-                        var secureCheckout = buyService.WebDriver.FindElement(By.XPath("//*[contains(text(),'Secure Checkout')]"));
+                        await Task.Delay(2000);
+                        var secureCheckout = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'Secure Checkout')]"));
                         secureCheckout.Click();
 
+                        //sign in
                         await Task.Delay(2000);
-                        var continueToPay = buyService.WebDriver.FindElement(By.XPath("//*[contains(text(),'Continue to payment')]"));
+                        var signin = _webBuyDriver.FindElements(By.Id("signInSubmit"));
+                        if(signin.Count > 0)
+                        {
+                            var emailBox = _webBuyDriver.FindElements(By.Id("labeled-input-signEmail"));
+                            if (emailBox.Count > 0) //login new 
+                            {
+                                emailBox[0].SendKeys(_account);
+                                await Task.Delay(50);
+
+                                var submitBtn = _webBuyDriver.FindElement(By.Id("signInSubmit"));
+                                submitBtn.Click();
+                                await Task.Delay(1000);
+
+                                var passwBox = _webBuyDriver.FindElement(By.Id("labeled-input-password"));
+                                passwBox.SendKeys(_passw);
+                                await Task.Delay(100);
+
+                                var signInSumbit = _webBuyDriver.FindElement(By.Id("signInSubmit"));
+                                signInSumbit.Click();
+                            }
+                            else //login again if it requests (already login)
+                            {
+                                await Task.Delay(1500);
+                                var signInSumbit = _webBuyDriver.FindElement(By.Id("signInSubmit"));
+                                signInSumbit.Click();
+                            }
+                            await Task.Delay(2000);
+                        }    
+                        
+                        IJavaScriptExecutor js = (IJavaScriptExecutor)_webBuyDriver;
+                        js.ExecuteScript("window.scrollBy(0, document.body.scrollHeight || document.documentElement.scrollHeight)", "");
+                        await Task.Delay(500);
+                        var continueToPay = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'Continue to payment')]"));
                         continueToPay.Click();
 
-                        await Task.Delay(2000);
-                        var inputCCV = buyService.WebDriver.FindElement(By.XPath("//input[@aria-label='Security code']"));
+                        await Task.Delay(1000);
+                        var inputCCV = _webBuyDriver.FindElement(By.ClassName("mask-cvv-4"));    //("//input[@aria-label='Security code']"));
+                        inputCCV.Click();
                         inputCCV.SendKeys("218"); // CCV the card 8760 3.75$ a Minh
 
-                        await Task.Delay(100);
-                        var reviewYourOrder = buyService.WebDriver.FindElement(By.XPath("//*[contains(text(),'Review your order')]"));
+                        js.ExecuteScript("window.scrollBy(0, document.body.scrollHeight || document.documentElement.scrollHeight)", "");
+                        await Task.Delay(1000);
+                        var reviewYourOrder = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'Review your order')]"));
                         reviewYourOrder.Click();
 
-                        await Task.Delay(1000);
-                        var placeOrder = buyService.WebDriver.FindElement(By.Id("btnCreditCard"));
+                        await Task.Delay(2000);
+                        var placeOrder = _webBuyDriver.FindElement(By.Id("btnCreditCard"));
                         placeOrder.Click();
 
-                        await Task.Delay(4000);
-                        var thankYou = buyService.WebDriver.FindElement(By.XPath("//*[contains(text(),'Thank you for your order')]"));
+                        await Task.Delay(6000);
+                        var thankYou = _webBuyDriver.FindElement(By.XPath("//*[contains(text(),'Thank you for your order')]"));
                         //find thankyou
-                        TakeSnapShot(buyService.WebDriver);
+                        TakeSnapShot(_webBuyDriver);
                         IncreaseAsinBought(asin);
                         if (asin.NumberBought >= asin.BuyLimit)
                         {
                             UpdateAsinStatus(asin, BuyStatus.BOUGHT);
-                            asin.BuyService.Close();
                             return;
                         }
                     }
@@ -293,18 +383,16 @@ namespace AutoBuy
                     {
                         logs.Debug(ex.Message);
                         logs.Error(ex.StackTrace);
-                        TakeSnapShot(buyService.WebDriver);
+                        TakeSnapShot(_webBuyDriver);
                         await Task.Delay(TimeSpan.FromSeconds(10));
                         continue;
                     }
                 }
                 catch (Exception ex)
                 {
-                    asin.BuyService.Close();
                     UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
                     return;
                 }
-
             }
         }
 
@@ -316,7 +404,7 @@ namespace AutoBuy
                 {
                     var ss = (driver as ITakesScreenshot).GetScreenshot();
                     var fileName = String.Format("{0:HH-mm-ss}", DateTime.Now) + ".jpg";
-                    var folderPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, _captureScreenFolder, String.Format("{0:ddMMM}", DateTime.Now));
+                    var folderPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, NewEgg.ScreenShortDir, String.Format("{0:ddMMM}", DateTime.Now));
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
@@ -350,6 +438,7 @@ namespace AutoBuy
         {
             ZaloHelper.SendZaloMessage($"{asin.Name} {asin.Asin} stock at {asin.Price} buy it: {_homeUrl}p/{asin.Asin}");
             //await Task.Delay(TimeSpan.FromMinutes(10)); // wait 10 minute before check again
+            TakeSnapShot(_webCheckDriver);
             UpdateAsinStatus(asin, BuyStatus.BOUGHT);
         }
 
@@ -395,7 +484,6 @@ namespace AutoBuy
             {
                 try
                 {
-                    removeItem?.BuyService?.Close();
                     CheckList.Remove(removeItem);
                 }
                 catch (Exception)
@@ -430,13 +518,8 @@ namespace AutoBuy
                 _cancelSource?.Cancel();
                 _cancelSource?.Dispose();
 
-                _settingWebDriver?.Dispose();
-
-                foreach (var asin in CheckList)
-                {
-                    asin.CancelSource?.Cancel();
-                    asin.BuyService?.Close();
-                }
+                _webBuyDriver?.Dispose();
+                _isRunning = false;
             }
             catch (Exception)
             {
@@ -449,14 +532,8 @@ namespace AutoBuy
             try
             {
                 _cancelSource?.Cancel();
-                _webDriver?.Dispose();
-
-                _settingWebDriver?.Dispose();
-                foreach (var asin in CheckList)
-                {
-                    asin.CancelSource?.Cancel();
-                    asin.BuyService?.Close();
-                }
+                _webCheckDriver?.Dispose();
+                _webBuyDriver?.Dispose();
             }
             catch (Exception)
             {
@@ -506,7 +583,7 @@ namespace AutoBuy
             try
             {
                 var contentToWrite = JsonConvert.SerializeObject(CheckList);
-                writer = new StreamWriter(_listItemFileName, false);
+                writer = new StreamWriter(NewEgg.NewEggListItemFile, false);
                 writer.Write(contentToWrite);
             }
             finally
@@ -558,33 +635,9 @@ namespace AutoBuy
             }
         }
 
-        public async void SettingBrowser_Click()
+        public void SettingBrowser_Click()
         {
-            try
-            {
-                var driverService = ChromeDriverService.CreateDefaultService();
-                driverService.HideCommandPromptWindow = true;
-
-                //clear old cache file
-                for (int i = 1; i < 30; i++)
-                {
-                    if (Directory.Exists(_localBuyDir + i))
-                    {
-                        Directory.Delete(_localBuyDir + i, true);
-                    }
-                }
-
-                ChromeOptions buyOptions = new ChromeOptions();
-                buyOptions.AddArgument(CommonUtil.UserData + _localBuyDir);
-                _settingWebDriver = new ChromeDriver(driverService, buyOptions);
-
-                await Task.Delay(TimeSpan.FromMinutes(5));
-                _settingWebDriver?.Dispose();
-            }
-            catch (Exception ex)
-            {
-                logs.Error(ex.Message);
-            }
+            return;
         }
 
         internal void TurnOnNoti(BuyItemModel asin)

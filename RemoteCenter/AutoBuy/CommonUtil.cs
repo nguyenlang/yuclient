@@ -12,15 +12,11 @@
         public const string UserBuyDir = @"\AppData\Local\Google\Chrome\User Data\Amazon";
         public const string AmazonListItemFile = "amazonList.json";
         public const string ScreenShortDir = "AmazonScreenShort";
-
     }
 
     class NewEgg
     {
-        public const string HomrUrl = "https://www.newegg.com/"; //https://www.newegg.com/p/N82E16819113497
         public const string UserDir = @"\AppData\Local\Google\Chrome\User Data\NewEgg";
-        public const string AvaiableSignalPath = "//*[@id=\"ProductBuy\"]/div/div[2]/button";
-        public const string PriceSignalCSS = ".product-price .price-current";
         public const string NewEggListItemFile = "newEggList.json";
         public const string ScreenShortDir = "NeweggScreenShort";
     }

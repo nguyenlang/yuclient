@@ -58,6 +58,7 @@ namespace AutoBuy
                 var driverService = ChromeDriverService.CreateDefaultService();
                 driverService.HideCommandPromptWindow = true;
                 _checkDriver = new ChromeDriver(driverService, options);
+                _checkDriver.Navigate().GoToUrl(_homeUrl);
             }
             catch (Exception e)
             {
@@ -207,6 +208,7 @@ namespace AutoBuy
                 AddLog("Stop");
                 _cancelSource?.Cancel();
                 _cancelSource?.Dispose();
+                _isRunning = false;
             }
             catch (Exception)
             {
