@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoBuy"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="820"
+        Title="{Binding Version}" Height="600" Width="820"
         Closed="Window_Closed">
     <Grid Margin="0,0,0,3">
         <Grid.RowDefinitions>

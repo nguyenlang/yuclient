@@ -132,8 +132,5 @@ namespace AutoBuy
 
         [JsonIgnore]
         public BuyService BuyService = null;
-
-        [JsonIgnore]
-        public int BuyServiceIndex = 0;
     }
 }

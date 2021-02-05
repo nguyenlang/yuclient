@@ -28,8 +28,8 @@ namespace AutoBuy
         private string _addToCartBtn = "//*[starts-with(@id,'fulfillment-add-to-cart-button-')]/div/div/div/button";
         
         private string _priceSignal; //can not get price, dynamic id and xpath
-        private string _listItemFileName = "bestBuyList.json";
-        private string _chromeCacheDir = @"\AppData\Local\Google\Chrome\User Data\BestBuy";
+        private string _listItemFileName = BestBuy.ListItemFileName;
+        private string _chromeCacheDir = BestBuy.UserDir;
 
         public object LockObject = new object();
         private bool _isRunning = false;
@@ -44,7 +44,6 @@ namespace AutoBuy
         public BestBuyCheckingModel()
         {
             _chromeCacheDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + _chromeCacheDir;
-            InitialWebDriver();
         }
 
         public void InitialWebDriver()
@@ -82,6 +81,7 @@ namespace AutoBuy
 
         private async void checkAvailable()
         {
+            InitialWebDriver();
             int index = 0;
             while (true)
             {
@@ -177,6 +177,10 @@ namespace AutoBuy
                 try
                 {
                     CheckList.Remove(removeItem);
+                    if(CheckList.Count <=0)
+                    {
+                        _checkDriver?.Quit();
+                    }    
                 }
                 catch (Exception)
                 {
@@ -221,7 +225,7 @@ namespace AutoBuy
             try
             {
                 _cancelSource?.Cancel();
-                _checkDriver?.Dispose();
+                _checkDriver?.Quit();
             }
             catch (Exception)
             {
@@ -312,19 +316,15 @@ namespace AutoBuy
                 logs.Error(ex.Message);
             }
         }
-        private int GetSmallestFreeIndex()
-        {
-            for (int i = 0; ; i++)
-            {
-                var sv = CheckList.FirstOrDefault(a => a.BuyServiceIndex == i);
-                if (sv == null)
-                    return i;
-            }
-        }
 
         internal void TurnOnNoti(BuyItemModel asin)
         {
             UpdateAsinStatus(asin, BuyStatus.OUT_OF_STOCK);
+        }
+
+        internal void SettingBrowser_Click()
+        {
+            //TODO:
         }
     }
 }

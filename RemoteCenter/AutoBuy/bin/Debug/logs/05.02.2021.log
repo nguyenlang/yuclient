@@ -1,0 +1,167 @@
+2021-02-05 09:09:21,189 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:09:29,289 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:09:29,359 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 348
+2021-02-05 09:09:42,606 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:09:59,329 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:09:59,348 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 348
+2021-02-05 09:10:14,219 [12] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:35:22,266 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:35:44,015 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:36:08,623 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:36:10,411 [9] DEBUG AutoBuy.MainWindow [(null)] - element not interactable
+  (Session info: chrome=88.0.4324.104)
+2021-02-05 09:36:10,481 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebElement.Execute(String commandToExecute, Dictionary`2 parameters)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 360
+2021-02-05 09:36:24,524 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:36:29,922 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:36:29,944 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 348
+2021-02-05 09:36:43,469 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:36:49,091 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:36:49,126 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 348
+2021-02-05 09:37:03,381 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:37:08,791 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:37:08,829 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 348
+2021-02-05 09:37:25,017 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:44:42,750 [9] DEBUG AutoBuy.MainWindow [(null)] - element not interactable
+  (Session info: chrome=88.0.4324.104)
+2021-02-05 09:44:42,796 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebElement.Execute(String commandToExecute, Dictionary`2 parameters)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 360
+2021-02-05 09:47:54,027 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:47:55,656 [9] DEBUG AutoBuy.MainWindow [(null)] - element not interactable
+  (Session info: chrome=88.0.4324.104)
+2021-02-05 09:47:55,737 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebElement.Execute(String commandToExecute, Dictionary`2 parameters)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 361
+2021-02-05 09:48:09,778 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:48:11,157 [9] DEBUG AutoBuy.MainWindow [(null)] - element not interactable
+  (Session info: chrome=88.0.4324.104)
+2021-02-05 09:48:11,204 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebElement.Execute(String commandToExecute, Dictionary`2 parameters)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 361
+2021-02-05 09:48:26,637 [13] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:48:29,070 [13] DEBUG AutoBuy.MainWindow [(null)] - element not interactable
+  (Session info: chrome=88.0.4324.104)
+2021-02-05 09:48:29,133 [13] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebElement.Execute(String commandToExecute, Dictionary`2 parameters)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 361
+2021-02-05 09:48:43,402 [12] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:48:45,442 [12] DEBUG AutoBuy.MainWindow [(null)] - element not interactable
+  (Session info: chrome=88.0.4324.104)
+2021-02-05 09:48:45,476 [12] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Remote.RemoteWebDriver.UnpackAndThrowOnError(Response errorResponse)
+   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+   at OpenQA.Selenium.Remote.RemoteWebElement.Execute(String commandToExecute, Dictionary`2 parameters)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 361
+2021-02-05 09:48:57,760 [9] DEBUG AutoBuy.MainWindow [(null)] - invalid session id
+2021-02-05 09:56:46,807 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:56:53,162 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:56:53,245 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 359
+2021-02-05 09:57:08,542 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 09:57:14,055 [9] DEBUG AutoBuy.MainWindow [(null)] - Timed out after 5 seconds
+2021-02-05 09:57:14,096 [9] ERROR AutoBuy.MainWindow [(null)] -    at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)
+   at AutoBuy.MainWindow.<BuyItem>d__39.MoveNext() in D:\SourceCode\yuclient\RemoteCenter\AutoBuy\MainWindow.xaml.cs:line 348
+2021-02-05 09:57:28,555 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 10:02:48,432 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 10:19:12,991 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 10:26:35,330 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma B07QMK5R45 stock at 92.7
+2021-02-05 10:37:35,793 [9] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 10:37:43,919 [10] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 10:37:45,090 [8] INFO  AutoBuy.MainWindow [(null)] - Giga 3060ti B08NYPLXPJ out of stock
+2021-02-05 10:37:52,170 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 10:37:52,491 [10] INFO  AutoBuy.MainWindow [(null)] - Giga 3060TI Egle B08NYPKW1Z out of stock
+2021-02-05 10:37:58,986 [9] INFO  AutoBuy.MainWindow [(null)] - 3070 PNY B08HBJB7YD out of stock
+2021-02-05 10:38:00,512 [13] INFO  AutoBuy.MainWindow [(null)] - 3070 tuf B08L8KC1J7 out of stock
+2021-02-05 10:38:01,183 [10] INFO  AutoBuy.MainWindow [(null)] - 3060 ti asus B083Z7TR8Z out of stock
+2021-02-05 10:38:08,121 [10] INFO  AutoBuy.MainWindow [(null)] - 3070 Giga B08KY266MG out of stock
+2021-02-05 10:38:10,641 [13] INFO  AutoBuy.MainWindow [(null)] - 3070 evga B08L8L71SM out of stock
+2021-02-05 10:38:11,013 [10] INFO  AutoBuy.MainWindow [(null)] - MSI 3060ti  Ventus B08P2DQ28S out of stock
+2021-02-05 14:09:34,616 [8] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 14:09:41,660 [8] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 14:09:51,140 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 14:10:03,084 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 92.7 =>> over price
+2021-02-05 14:10:07,081 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 14:10:14,868 [8] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 14:10:23,010 [8] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 14:10:25,143 [13] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 14:10:40,124 [14] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 14:10:50,166 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 14:10:53,865 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 14:11:04,919 [8] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 14:11:08,181 [10] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 14:11:11,964 [8] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 14:11:12,422 [14] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 14:11:13,476 [13] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 92.7 =>> over price
+2021-02-05 14:11:36,612 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 14:11:41,585 [13] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 92.7 =>> over price
+2021-02-05 14:11:44,247 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 14:11:54,360 [8] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 14:11:57,686 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 14:12:02,454 [14] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 14:12:12,940 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 14:12:18,309 [13] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 14:12:19,246 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 14:12:27,280 [10] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 14:12:35,609 [13] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 14:12:41,005 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 14:12:45,236 [14] DEBUG AutoBuy.MainWindow [(null)] - invalid session id
+2021-02-05 14:12:46,269 [9] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 14:12:46,339 [8] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 16:24:14,494 [8] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 16:24:21,285 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 16:24:31,513 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 16:24:34,653 [8] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 16:24:40,836 [13] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 16:24:41,110 [12] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 114 =>> over price
+2021-02-05 16:24:50,583 [12] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 16:24:59,155 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 16:25:01,339 [12] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 16:25:21,065 [9] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 16:25:21,644 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 16:25:33,153 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 16:25:42,525 [8] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 16:25:53,158 [14] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 16:25:53,486 [8] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 16:25:53,719 [13] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 114 =>> over price
+2021-02-05 16:26:13,035 [12] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 16:26:21,798 [12] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 16:26:26,317 [13] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 16:26:29,767 [13] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 16:26:38,323 [12] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 16:26:41,205 [9] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 114 =>> over price
+2021-02-05 16:26:46,679 [8] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 16:26:55,486 [8] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 16:27:05,827 [13] INFO  AutoBuy.MainWindow [(null)] - 3060ti EVGA B08P2H5LW2 out of stock
+2021-02-05 16:27:09,481 [12] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF 378.99 =>> over price
+2021-02-05 16:27:10,926 [14] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 114 =>> over price
+2021-02-05 16:27:13,903 [12] INFO  AutoBuy.MainWindow [(null)] - xxx B083Z7TR8Z out of stock
+2021-02-05 16:27:15,641 [13] INFO  AutoBuy.MainWindow [(null)] - 5600x B08166SLDF out of stock
+2021-02-05 16:27:21,230 [12] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 16:27:32,310 [9] DEBUG AutoBuy.MainWindow [(null)] - invalid session id
+2021-02-05 16:27:32,370 [12] INFO  AutoBuy.MainWindow [(null)] - Fuma2 B07QMK5R45 out of stock
+2021-02-05 17:00:56,597 [8] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 17:01:53,468 [9] DEBUG AutoBuy.MainWindow [(null)] - invalid session id
+2021-02-05 17:02:12,489 [14] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock
+2021-02-05 17:02:39,633 [10] DEBUG AutoBuy.MainWindow [(null)] - Object reference not set to an instance of an object.
+2021-02-05 17:02:39,732 [13] DEBUG AutoBuy.MainWindow [(null)] - A exception with a null response was thrown sending an HTTP request to the remote WebDriver server for URL http://localhost:50301/session//screenshot. The status of the exception was ConnectFailure, and the message was: Unable to connect to the remote server
+2021-02-05 17:06:07,857 [8] INFO  AutoBuy.MainWindow [(null)] - 5900x B08164VTWH out of stock
+2021-02-05 17:06:34,718 [9] DEBUG AutoBuy.MainWindow [(null)] - invalid session id
+2021-02-05 17:06:34,835 [13] INFO  AutoBuy.MainWindow [(null)] - 3060ti TUF B083Z5P6TX out of stock

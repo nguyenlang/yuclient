@@ -13,9 +13,11 @@ namespace AutoBuy
         public IWebDriver WebDriver { get; set; }
         public WebDriverWait WebDriverWait { get; set; }
 
-        public Boolean IsRunning = false;
+        public int Index { private set; get; }
+        public bool IsBusy { get; set; } = false;
         public BuyService(string localBuyDir, int order, PageLoadStrategy pageLoad = PageLoadStrategy.Eager)
         {
+            Index = order;
             var buyDir = localBuyDir + order;
             if (!Directory.Exists(buyDir))
             {
@@ -46,7 +48,8 @@ namespace AutoBuy
             }
             catch (Exception ex)
             {
-                WebDriver?.Dispose();
+                WebDriver?.Close();
+                WebDriver?.Quit();
                 WebDriver = null;
                 WebDriverWait = null;
 
@@ -57,7 +60,8 @@ namespace AutoBuy
 
         public void Close()
         {
-            WebDriver?.Dispose();
+            WebDriver?.Close();
+            WebDriver?.Quit();
             WebDriver = null;
             WebDriverWait = null;
         }

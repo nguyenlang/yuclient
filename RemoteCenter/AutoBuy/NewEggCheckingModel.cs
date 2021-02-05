@@ -55,7 +55,6 @@ namespace AutoBuy
         public NewEggCheckingModel()
         {
             _localBuyDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + NewEgg.UserDir;
-            InitialWebDriver();
         }
 
         public void InitialWebDriver()
@@ -78,7 +77,6 @@ namespace AutoBuy
 
                 //Refresh task
                 RefreshBuyChromeDriver();
-                //Task.Run(() => RefreshBuyChromeDriver());
             }
             catch (Exception e)
             {
@@ -116,7 +114,7 @@ namespace AutoBuy
 
                         var submitBtn = _webBuyDriver.FindElement(By.Id("signInSubmit"));
                         submitBtn.Click();
-                        await Task.Delay(1000);
+                        await Task.Delay(2000);
 
                         var passwBox = _webBuyDriver.FindElement(By.Id("labeled-input-password"));
                         passwBox.SendKeys(_passw);
@@ -143,6 +141,7 @@ namespace AutoBuy
         private async void checkAvailable()
         {
             int index = 0;
+            InitialWebDriver();
             while (true)
             {
                 if (_cancelToken.IsCancellationRequested || CheckList.Count <= 0) //stop thread
@@ -330,7 +329,7 @@ namespace AutoBuy
 
                                 var submitBtn = _webBuyDriver.FindElement(By.Id("signInSubmit"));
                                 submitBtn.Click();
-                                await Task.Delay(1000);
+                                await Task.Delay(2000);
 
                                 var passwBox = _webBuyDriver.FindElement(By.Id("labeled-input-password"));
                                 passwBox.SendKeys(_passw);
@@ -447,7 +446,7 @@ namespace AutoBuy
             var item = CheckList.FirstOrDefault(i => i.Asin.Equals(buyItem.Asin, StringComparison.OrdinalIgnoreCase));
             if (item == null)
             {
-                buyItem.BuyServiceIndex = GetSmallestFreeIndex();
+                //buyItem.BuyServiceIndex = GetSmallestFreeIndex();
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     try
@@ -485,6 +484,18 @@ namespace AutoBuy
                 try
                 {
                     CheckList.Remove(removeItem);
+                    if(CheckList.Count <= 0)
+                    {
+                        _cancelSource?.Cancel();
+                        _cancelSource?.Dispose();
+
+                        _webCheckDriver?.Close();
+                        _webCheckDriver?.Quit();
+
+                        _webBuyDriver?.Close();
+                        _webBuyDriver?.Quit();
+                        _isRunning = false;
+                    }    
                 }
                 catch (Exception)
                 {
@@ -518,7 +529,11 @@ namespace AutoBuy
                 _cancelSource?.Cancel();
                 _cancelSource?.Dispose();
 
-                _webBuyDriver?.Dispose();
+                _webCheckDriver?.Close();
+                _webCheckDriver?.Quit();
+
+                _webBuyDriver?.Close();
+                _webBuyDriver?.Quit();
                 _isRunning = false;
             }
             catch (Exception)
@@ -532,7 +547,10 @@ namespace AutoBuy
             try
             {
                 _cancelSource?.Cancel();
-                _webCheckDriver?.Dispose();
+                _webCheckDriver?.Close();
+                _webCheckDriver?.Quit();
+                
+                _webBuyDriver?.Close();
                 _webBuyDriver?.Dispose();
             }
             catch (Exception)
@@ -623,15 +641,6 @@ namespace AutoBuy
             catch (Exception ex)
             {
                 logs.Error(ex.Message);
-            }
-        }
-        private int GetSmallestFreeIndex()
-        {
-            for (int i = 0; ; i++)
-            {
-                var sv = CheckList.FirstOrDefault(a => a.BuyServiceIndex == i);
-                if (sv == null)
-                    return i;
             }
         }
 

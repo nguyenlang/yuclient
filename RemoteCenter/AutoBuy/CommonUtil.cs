@@ -21,6 +21,11 @@
         public const string ScreenShortDir = "NeweggScreenShort";
     }
 
+    class BestBuy
+    {
+        public const string ListItemFileName = "bestBuyList.json";
+        public const string UserDir = @"\AppData\Local\Google\Chrome\User Data\BestBuy";
+    }
     class ZaloValue
     {
         //App: Alarm Item avaiable
